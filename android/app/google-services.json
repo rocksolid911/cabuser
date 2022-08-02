@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "756613946388",
+    "project_id": "aim-user",
+    "storage_bucket": "aim-user.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756613946388:android:ed61149e32b7af6630db01",
+        "android_client_info": {
+          "package_name": "com.app.aimcabuser"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "756613946388-prq108o6u1hgk02edimvir4ilcke06m4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.aimcabuser",
+            "certificate_hash": "540d5ee974d88e3e8687a1e7693b561c48df273f"
+          }
+        },
+        {
+          "client_id": "756613946388-vj6lfddf5fcg8lc41k7no4633mo2781p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgG9cE16fbOpAM-PK1TM9Hodfh0kuMxN4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "756613946388-vj6lfddf5fcg8lc41k7no4633mo2781p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
