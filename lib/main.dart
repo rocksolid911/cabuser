@@ -9,6 +9,7 @@ import 'dart:io';
 // import 'package:aim_cab/screens/vendor/VendorDashBoard.dart';
 // import 'package:aim_cab/utils/util.dart';
 import 'package:aimcabuser/user/api/api_service.dart';
+import 'package:aimcabuser/user/cargo/providers.dart';
 import 'package:aimcabuser/user/provider/variableprovider.dart';
 import 'package:aimcabuser/user/screens/DashBoard.dart';
 import 'package:aimcabuser/user/screens/UserLocationScreen.dart';
@@ -56,9 +57,9 @@ class MyApp extends StatelessWidget {
       // Always call dispose on the ChopperClient to release resources
       dispose: (context, ApiService service) => service.client.dispose(),
       child: MultiProvider(
-
         providers: [
           ChangeNotifierProvider<VariableProvider>(create: (context)=>VariableProvider()),
+          ChangeNotifierProvider<BookingProvider>(create: (context)=>BookingProvider()),
         ],
         child: NeumorphicApp(
           debugShowCheckedModeBanner: false,

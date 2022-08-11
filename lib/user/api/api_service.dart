@@ -43,7 +43,7 @@ abstract class ApiService extends ChopperService {
   static ApiService create() {
     final _client = ChopperClient(
       converter: JsonConverter(),
-      errorConverter: JsonConverter(),
+      errorConverter: const JsonConverter(),
       interceptors: [HttpLoggingInterceptor()],
       services: [
         _$ApiService(),

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:carp_background_location/carp_background_location.dart';
+// import 'package:carp_background_location/carp_background_location.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_overlay_loader/flutter_overlay_loader.dart';
@@ -53,7 +53,7 @@ logoutUser() async {
 
   prefs.clear();
 
-  await LocationManager().stop();
+ // await LocationManager().stop();
 }
 
 // setDriver(Map<String, dynamic> val, String token) async {

@@ -1,5 +1,4 @@
 # This is a generated file; do not edit or check into version control.
-background_locator=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/background_locator-1.6.12/
 file_picker=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/file_picker-4.5.1/
 flutter_facebook_auth=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_auth-4.3.3/
 flutter_facebook_auth_web=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_facebook_auth_web-3.1.2/
@@ -16,8 +15,7 @@ image_picker=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub
 image_picker_android=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_android-0.8.4+11/
 image_picker_for_web=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_for_web-2.1.6/
 image_picker_ios=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/image_picker_ios-0.8.5/
-location=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/location-4.3.0/
-location_permissions=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/location_permissions-4.0.1/
+location=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/location-4.4.0/
 location_web=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/location_web-3.1.1/
 open_file=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/open_file-3.2.1/
 path_provider=/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider-2.0.9/

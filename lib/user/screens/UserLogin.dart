@@ -145,7 +145,11 @@ class _UserLoginState extends State<UserLogin> {
                             final response = await service.postLogin({
                               "username": usernameEdit.value.text.toLowerCase(),
                               "password": passwordEdit.value.text,
-                              "type": "user"
+                              // "type": "user"
+                              "login_type": "normal",
+                              "facebook_id": "",
+                              "google_id":"",
+                              "firebase_id":""
                             });
                             dissmissLoader(context);
                             if (response.isSuccessful) {
@@ -173,9 +177,7 @@ class _UserLoginState extends State<UserLogin> {
                               } else {
                                 showError(
                                     context,
-                                    userRegistration.msg != null
-                                        ? userRegistration.msg
-                                        : "please check username or password");
+                                    userRegistration.msg ?? "please check username or password");
                               }
                             }
                           }

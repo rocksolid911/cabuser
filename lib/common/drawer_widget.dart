@@ -49,7 +49,7 @@ class Custom_Drawer extends StatelessWidget {
                     child: Column(
                       children: [
                         Image.network(
-                          _user != null ? _user.userimage : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ0-8CYleGWDG2Vt9fKFSCnK7LPbp77RbUldw&usqp=CAU",
+                          _user != null ? _user.userimage : "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg",
                           width: 100,
                           height: 100,
                         ),

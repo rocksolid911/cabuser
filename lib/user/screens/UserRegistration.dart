@@ -386,7 +386,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                               if (userRegistration.status) {
                                 // showOtpVerify(userRegistration.data,
                                 //     userRegistration.token);
-                                setUser(userRegistration.toJson(),  userRegistration.token);
+                                setUser(userRegistration.data.toJson(),  userRegistration.token);
                                 Location location = Location();
                                 permissionGranted = await location.hasPermission();
 
@@ -399,6 +399,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                                             : const UserLocationScreen()),
                                         (Route<dynamic> route) => false);
                               } else {
+                                print(response.data);
                                 showError(context, userRegistration.msg);
                               }
                             }

@@ -16,3 +16,8 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 # aimcab_user
 # ccuser
+## plugin code changes
+-[plugin changed manually:to run location error free need to update](/home/rocksolid91/snap/flutter/common/flutter/.pub-cache/hosted/pub.dartlang.org/location-4.2.0/android/src/main/java/com/lyokone/location/FlutterLocationService.kt)
+-[line no 258]
+follow below link for details
+-[](https://stackoverflow.com/questions/71936711/andorid-studio-lass-flutterlocationservice-is-not-abstract-and-does-not-implem)
