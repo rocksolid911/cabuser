@@ -13,6 +13,7 @@ class AddBookingDetails {
     this.userId,
     this.amount,
     this.vehicleType,
+    this.parcelType,
     this.payment,
     this.source,
     this.destination,
@@ -33,6 +34,7 @@ class AddBookingDetails {
   String userId;
   int amount;
   String vehicleType;
+  String parcelType;
   String payment;
   String source;
   String destination;
@@ -53,6 +55,7 @@ class AddBookingDetails {
     userId: json["user_id"],
     amount: json["amount"],
     vehicleType: json["vehicle_type"],
+    parcelType: json["parcel_type"],
     payment: json["payment"],
     source: json["source"],
     destination: json["destination"],
@@ -74,6 +77,7 @@ class AddBookingDetails {
     "user_id": userId,
     "amount": amount,
     "vehicle_type": vehicleType,
+    "parcel_type": parcelType,
     "payment": payment,
     "source": source,
     "destination": destination,
@@ -85,9 +89,9 @@ class AddBookingDetails {
     "promo_code": promoCode,
     "package_size": packageSize,
     "package_weight": packageWeight,
-    "package_images": List<dynamic>.from(packageImages.map((x) => x)),
+    "package_images": List<dynamic>.from(packageImages.map((x) => x))??[],
     "is_pre": isPre,
     "is_round": isRound,
-    "round_drop_location": List<dynamic>.from(roundDropLocation.map((x) => x)),
+    "round_drop_location": List<dynamic>.from(roundDropLocation.map((x) => x))??[],
   };
 }

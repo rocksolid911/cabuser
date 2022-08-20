@@ -1316,7 +1316,7 @@ class _DashBoardState extends State<DashBoard> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    SubScription()));
+                                                    const SubScription()));
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:

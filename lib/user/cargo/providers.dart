@@ -12,10 +12,23 @@ class BookingProvider extends ChangeNotifier{
   CargoApi cargoApi = CargoApi();
   AbdResponse abdResponse = AbdResponse();
   bool loading = false;
-  bool error = false;
+  bool error;
+  bool shoeDetails = false;
+  bool isNextButton = false;
+  Future<bool> shE;
   String errorMessage = "";
   String message = "";
   String token = "";
+  bool get getShowDetails => shoeDetails;
+  bool get getIsNext => isNextButton;
+  set setShowDetails(bool value) {
+    shoeDetails = value;
+    notifyListeners();
+  }
+  set setIsNext(bool value) {
+    isNextButton = value;
+    notifyListeners();
+  }
   AddBookingDetails get getBookingDetails{
     return bookingDetails;
   }
@@ -69,23 +82,45 @@ class BookingProvider extends ChangeNotifier{
   addBookingProvider(context)async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
     showLoader(context);
-    abdResponse = await cargoApi.getBookingResCargo(bookingDetails);
-    switch(abdResponse.status.toString()){
-      case "true":
+    print(bookingDetails.toJson());
+    abdResponse = await cargoApi.getBookingResCargo(bookingDetails, context);
+    print("messege after :${cargoApi.getMessage}");
+    switch(cargoApi.getStatusCode){
+      case 200:
         dissmissLoader(context);
-        showSuccess(context, abdResponse.message);
+        setShowDetails = true;
+        setIsNext = false;
+        notifyListeners();
+        showSuccess(context, cargoApi.getMessage);
         break;
-      case "false":
+      case 403:
         dissmissLoader(context);
-       showError(context, abdResponse.message);
+        setShowDetails = false;
+        setIsNext = true;
+        notifyListeners();
+       showError(context, cargoApi.getMessage);
         break;
-
+      case 500:
+        dissmissLoader(context);
+        setShowDetails = false;
+        setIsNext = true;
+        notifyListeners();
+        showError(context, cargoApi.getMessage);
+        break;
+      default:
+        showError(context, cargoApi.getMessage);
+        setShowDetails = false;
+        setIsNext = true;
+        notifyListeners();
+        dissmissLoader(context);
+        break;
     }
 
 
     if (kDebugMode) {
       print("user Id after booking details:{${abdResponse.data.userId}}");
+      print(getError.toString());
     }
-    dissmissLoader(context);
+   // dissmissLoader(context);
   }
 }

@@ -1,33 +1,33 @@
 // To parse this JSON data, do
 //
-//     final abdResponse = abdResponseFromJson(jsonString);
+//     final bookingdetails = bookingdetailsFromJson(jsonString);
 
 import 'dart:convert';
 
-AbdResponse abdResponseFromJson(String str) => AbdResponse.fromJson(json.decode(str));
+Bookingdetails bookingdetailsFromJson(String str) => Bookingdetails.fromJson(json.decode(str));
 
-String abdResponseToJson(AbdResponse data) => json.encode(data.toJson());
+String bookingdetailsToJson(Bookingdetails data) => json.encode(data.toJson());
 
-class AbdResponse {
-  AbdResponse({
-    this.status,
+class Bookingdetails {
+  Bookingdetails({
     this.message,
+    this.status,
     this.data,
   });
 
-  bool status;
   String message;
+  bool status;
   Data data;
 
-  factory AbdResponse.fromJson(Map<String, dynamic> json) => AbdResponse(
-    status: json["status"],
+  factory Bookingdetails.fromJson(Map<String, dynamic> json) => Bookingdetails(
     message: json["message"],
+    status: json["status"],
     data: Data.fromJson(json["data"]),
   );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
     "message": message,
+    "status": status,
     "data": data.toJson(),
   };
 }
@@ -66,7 +66,6 @@ class Data {
     this.currentLocation,
     this.payment,
     this.roundDropLocation,
-    this.packageWeight,
     this.createdAt,
     this.v,
   });
@@ -103,46 +102,44 @@ class Data {
   List<double> currentLocation;
   String payment;
   List<double> roundDropLocation;
-  dynamic packageWeight;
   DateTime createdAt;
   int v;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     vehicleType: json["vehicle_type"],
-    amount: json["amount"]??0,
-    paymentDone: json["payment_done"]??false,
-    amountReceived: json["amount_received"]??0,
-    paymentTime: json["payment_time"]??'',
-    source: json["source"]??'',
-    destination: json["destination"]??'',
-    isArrvied: json["is_arrvied"]??false,
-    arrviedTime: json["arrvied_time"]??'',
-    distance: json["distance"]??'',
-    date: json["date"]??'',
-    isPre: json["is_pre"]??false,
-    isRound: json["is_round"]??false,
-    status: json["status"]??'',
-    cancelReason: json["cancel_reason"]??'',
-    cancelBy: json["cancel_by"]??'',
-    cancelById: json["cancel_by_id"]??'',
-    cancelTime: json["cancel_time"]??'',
-    tripDate: DateTime.parse(json["trip_date"]??''),
-    isStart: json["is_start"]??false,
-    starttime: json["starttime"]??'',
-    isEnd: json["is_end"]??false,
-    endtime: json["endtime"]??'',
-    packageSize: json["package_size"]??'',
-    packageImage: List<String>.from(json["package_image"].map((x) => x))??[],
-    id: json["_id"]??'',
-    userId: json["user_id"]??'',
-    sourceLocation: List<double>.from(json["source_location"].map((x) => x.toDouble()))??[],
-    destinationLocation: List<double>.from(json["destination_location"].map((x) => x.toDouble()))??[],
-    currentLocation: List<double>.from(json["current_location"].map((x) => x.toDouble()))??[],
-    payment: json["payment"]??'',
-    roundDropLocation: List<double>.from(json["round_drop_location"].map((x) => x.toDouble()))??[],
-    packageWeight: json["package_weight"]??'',
-    createdAt: DateTime.parse(json["createdAt"])??DateTime.now(),
-    v: json["__v"]??0,
+    amount: json["amount"],
+    paymentDone: json["payment_done"],
+    amountReceived: json["amount_received"],
+    paymentTime: json["payment_time"],
+    source: json["source"],
+    destination: json["destination"],
+    isArrvied: json["is_arrvied"],
+    arrviedTime: json["arrvied_time"],
+    distance: json["distance"],
+    date: json["date"],
+    isPre: json["is_pre"],
+    isRound: json["is_round"],
+    status: json["status"],
+    cancelReason: json["cancel_reason"],
+    cancelBy: json["cancel_by"],
+    cancelById: json["cancel_by_id"],
+    cancelTime: json["cancel_time"],
+    tripDate: DateTime.parse(json["trip_date"]),
+    isStart: json["is_start"],
+    starttime: json["starttime"],
+    isEnd: json["is_end"],
+    endtime: json["endtime"],
+    packageSize: json["package_size"],
+    packageImage: List<String>.from(json["package_image"].map((x) => x)),
+    id: json["_id"],
+    userId: json["user_id"],
+    sourceLocation: List<double>.from(json["source_location"].map((x) => x.toDouble())),
+    destinationLocation: List<double>.from(json["destination_location"].map((x) => x.toDouble())),
+    currentLocation: List<double>.from(json["current_location"].map((x) => x.toDouble())),
+    payment: json["payment"],
+    roundDropLocation: List<double>.from(json["round_drop_location"].map((x) => x.toDouble())),
+    createdAt: DateTime.parse(json["createdAt"]),
+    v: json["__v"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -178,7 +175,6 @@ class Data {
     "current_location": List<dynamic>.from(currentLocation.map((x) => x)),
     "payment": payment,
     "round_drop_location": List<dynamic>.from(roundDropLocation.map((x) => x)),
-    "package_weight": packageWeight,
     "createdAt": createdAt.toIso8601String(),
     "__v": v,
   };
