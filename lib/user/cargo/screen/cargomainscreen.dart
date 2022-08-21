@@ -28,6 +28,7 @@ import '../../model/RideEstimate.dart';
 import '../../model/User.dart';
 import '../model/selectparcel.dart';
 import '../providers.dart';
+import 'deliverycomplete.dart';
 
 class CargoScreen extends StatefulWidget {
   const CargoScreen({Key key}) : super(key: key);
@@ -783,45 +784,70 @@ class _CargoScreenState extends State<CargoScreen> {
                                     child: ElevatedButton(
                                       onPressed: () {
                                         print("error stat :${bookingProvider.getError}");
-                                        //field must not be null
-                                       bookingProvider.setBookingDetails=AddBookingDetails(
-                                           userId: _user.sId,
-                                           source: address.addressLine,
-                                           destination: destinationAddress.addressLine,
-                                           vehicleType: vehicleType,
-                                           parcelType: parcelType,
-                                           sourceLocation: [
-                                             address.coordinates.latitude,
-                                             address.coordinates.longitude
-                                           ],
-                                           destinationLocation: [
-                                             destinationAddress.coordinates.latitude,
-                                             destinationAddress.coordinates.longitude
-                                           ],
-                                           currentLocation: [
-                                             address.coordinates.latitude,
-                                             address.coordinates.longitude
-                                           ],
-                                           isPre: false,
-                                           distance: "1234",
-                                           tripDate: DateTime.now(),
-                                           isRound: false,
-                                           amount: 500,
-                                           payment: "payment_gateway",
-                                           promoCode: "",
-                                           packageSize: pkgsizetextcontrlr.text,
-                                           packageWeight: pkgweighttextcontrlr.text,
-                                           packageImages: [],
-                                           roundDropLocation: []
-                                       );
-                                       bookingProvider.addBookingProvider(
-                                           context,
-                                           file1: carSide1File.path,
-                                           file2: carSide2File.path,
-                                           file3: carSide3File.path
-                                       );
-                                        print("error stat 2 :${bookingProvider.getShowDetails}");
-                                        print(bookingProvider.getCargoBookingId);
+                                        if(vehicleType!=null){
+                                          //field must not be null
+                                          bookingProvider.setBookingDetails=AddBookingDetails(
+                                              userId: _user.sId,
+                                              source: address.addressLine,
+                                              destination: destinationAddress.addressLine,
+                                              vehicleType: vehicleType,
+                                              parcelType: parcelType,
+                                              sourceLocation: [
+                                                address.coordinates.latitude,
+                                                address.coordinates.longitude
+                                              ],
+                                              destinationLocation: [
+                                                destinationAddress.coordinates.latitude,
+                                                destinationAddress.coordinates.longitude
+                                              ],
+                                              currentLocation: [
+                                                address.coordinates.latitude,
+                                                address.coordinates.longitude
+                                              ],
+                                              isPre: false,
+                                              distance: "1234",
+                                              tripDate: DateTime.now(),
+                                              isRound: false,
+                                              amount: 500,
+                                              payment: "payment_gateway",
+                                              promoCode: "",
+                                              packageSize: pkgsizetextcontrlr.text,
+                                              packageWeight: pkgweighttextcontrlr.text,
+                                              packageImages: [],
+                                              roundDropLocation: []
+                                          );
+                                          bookingProvider.addBookingProvider(
+                                              context,
+                                              file1: carSide1File.path,
+                                              file2: carSide2File.path,
+                                              file3: carSide3File.path
+                                          );
+                                          print("error stat 2 :${bookingProvider.getShowDetails}");
+                                          print(bookingProvider.getCargoBookingId);
+                                        }else{
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  elevation: 10,
+                                                  title: const Text("Error",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
+                                                  content: const Text(
+                                                      "Please select vehicle type"),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: const Text("OK"),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        }
+
                                        },
                                       style: ButtonStyle(
                                         backgroundColor:
@@ -1121,6 +1147,7 @@ class _CargoScreenState extends State<CargoScreen> {
                                             // setState(() {
                                             //   detail=true;
                                             // });
+                                            Navigator.push(context, MaterialPageRoute(builder: (context)=>DeliveryComplete()));
                                           },
                                           style: ButtonStyle(
                                             backgroundColor:

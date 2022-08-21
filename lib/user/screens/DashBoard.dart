@@ -34,6 +34,7 @@ import '../../utils/Constant.dart';
 import '../../utils/util.dart';
 import '../Dashboard/widget/align_widget_1.dart';
 import '../Dashboard/widget/caboption.dart';
+import '../cargo/screen/deliverycomplete.dart';
 import '../model/AddBookingData.dart';
 import '../model/DriverLocationMap.dart';
 import '../model/RideEstimate.dart';
@@ -1341,7 +1342,9 @@ class _DashBoardState extends State<DashBoard> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const CargoScreen()));
+                                                    const CargoScreen()
+                                                //DeliveryComplete()
+                                            ));
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
