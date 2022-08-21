@@ -1203,110 +1203,135 @@ class _DashBoardState extends State<DashBoard> {
                                               fontSize: 15,
                                               color: Colors.white)),
                                       onPressed: () async {
-                                        String startCoordinatesString =
-                                            '(${address.coordinates.latitude}, ${address.coordinates.longitude})';
-                                        String destinationCoordinatesString =
-                                            '(${destinationAddress.coordinates.latitude}, ${destinationAddress.coordinates.longitude})';
+                                        if(destinationAddress!=null){
+                                          String startCoordinatesString =
+                                              '(${address.coordinates.latitude}, ${address.coordinates.longitude})';
+                                          String destinationCoordinatesString =
+                                              '(${destinationAddress.coordinates.latitude}, ${destinationAddress.coordinates.longitude})';
 
-                                        // Start Location Marker
+                                          // Start Location Marker
 
-                                        Marker startMarker = Marker(
-                                          markerId:
-                                              MarkerId(startCoordinatesString),
-                                          position: LatLng(
-                                              address.coordinates.latitude,
-                                              address.coordinates.longitude),
-                                          infoWindow: InfoWindow(
-                                            title: startCoordinatesString,
-                                            snippet: address.featureName,
-                                          ),
-                                          icon: await BitmapDescriptor
-                                              .fromAssetImage(
-                                                  const ImageConfiguration(
-                                                      size: Size(64, 64)),
-                                                  'assets/images/car_location.png'),
-                                        );
-
-                                        // Destination Location Marker
-
-                                        Marker destinationMarker = Marker(
-                                          markerId: MarkerId(
-                                              destinationCoordinatesString),
-                                          position: LatLng(
-                                              destinationAddress
-                                                  .coordinates.latitude,
-                                              destinationAddress
-                                                  .coordinates.longitude),
-                                          infoWindow: InfoWindow(
-                                            title: destinationCoordinatesString,
-                                            snippet:
-                                                destinationAddress.featureName,
-                                          ),
-                                          icon: BitmapDescriptor.defaultMarker,
-                                        );
-
-                                        markers.add(startMarker);
-                                        markers.add(destinationMarker);
-                                        double startLatitude =
-                                            address.coordinates.latitude;
-                                        double startLongitude =
-                                            address.coordinates.longitude;
-                                        double destinationLatitude =
-                                            destinationAddress
-                                                .coordinates.latitude;
-                                        double destinationLongitude =
-                                            destinationAddress
-                                                .coordinates.longitude;
-                                        double miny = (startLatitude <=
-                                                destinationLatitude)
-                                            ? startLatitude
-                                            : destinationLatitude;
-                                        double minx = (startLongitude <=
-                                                destinationLongitude)
-                                            ? startLongitude
-                                            : destinationLongitude;
-                                        double maxy = (startLatitude <=
-                                                destinationLatitude)
-                                            ? destinationLatitude
-                                            : startLatitude;
-                                        double maxx = (startLongitude <=
-                                                destinationLongitude)
-                                            ? destinationLongitude
-                                            : startLongitude;
-
-                                        double southWestLatitude = miny;
-                                        double southWestLongitude = minx;
-
-                                        double northEastLatitude = maxy;
-                                        double northEastLongitude = maxx;
-
-                                        // Accommodate the two locations within the
-                                        // camera view of the map
-                                        mapController.animateCamera(
-                                          CameraUpdate.newLatLngBounds(
-                                            LatLngBounds(
-                                              northeast: LatLng(
-                                                  northEastLatitude,
-                                                  northEastLongitude),
-                                              southwest: LatLng(
-                                                  southWestLatitude,
-                                                  southWestLongitude),
+                                          Marker startMarker = Marker(
+                                            markerId:
+                                            MarkerId(startCoordinatesString),
+                                            position: LatLng(
+                                                address.coordinates.latitude,
+                                                address.coordinates.longitude),
+                                            infoWindow: InfoWindow(
+                                              title: startCoordinatesString,
+                                              snippet: address.featureName,
                                             ),
-                                            100.0,
-                                          ),
-                                        );
-                                        await _createPolylines(
-                                            startLatitude,
-                                            startLongitude,
-                                            destinationLatitude,
-                                            destinationLongitude);
+                                            icon: await BitmapDescriptor
+                                                .fromAssetImage(
+                                                const ImageConfiguration(
+                                                    size: Size(64, 64)),
+                                                'assets/images/car_location.png'),
+                                          );
 
-                                        setState(() {
-                                          isDestinationLocation = false;
-                                          valuepro.isNextButton = true;
-                                        });
+                                          // Destination Location Marker
 
-                                        //Navigator.of(context).pop();
+                                          Marker destinationMarker = Marker(
+                                            markerId: MarkerId(
+                                                destinationCoordinatesString),
+                                            position: LatLng(
+                                                destinationAddress
+                                                    .coordinates.latitude,
+                                                destinationAddress
+                                                    .coordinates.longitude),
+                                            infoWindow: InfoWindow(
+                                              title: destinationCoordinatesString,
+                                              snippet:
+                                              destinationAddress.featureName,
+                                            ),
+                                            icon: BitmapDescriptor.defaultMarker,
+                                          );
+
+                                          markers.add(startMarker);
+                                          markers.add(destinationMarker);
+                                          double startLatitude =
+                                              address.coordinates.latitude;
+                                          double startLongitude =
+                                              address.coordinates.longitude;
+                                          double destinationLatitude =
+                                              destinationAddress
+                                                  .coordinates.latitude;
+                                          double destinationLongitude =
+                                              destinationAddress
+                                                  .coordinates.longitude;
+                                          double miny = (startLatitude <=
+                                              destinationLatitude)
+                                              ? startLatitude
+                                              : destinationLatitude;
+                                          double minx = (startLongitude <=
+                                              destinationLongitude)
+                                              ? startLongitude
+                                              : destinationLongitude;
+                                          double maxy = (startLatitude <=
+                                              destinationLatitude)
+                                              ? destinationLatitude
+                                              : startLatitude;
+                                          double maxx = (startLongitude <=
+                                              destinationLongitude)
+                                              ? destinationLongitude
+                                              : startLongitude;
+
+                                          double southWestLatitude = miny;
+                                          double southWestLongitude = minx;
+
+                                          double northEastLatitude = maxy;
+                                          double northEastLongitude = maxx;
+
+                                          // Accommodate the two locations within the
+                                          // camera view of the map
+                                          mapController.animateCamera(
+                                            CameraUpdate.newLatLngBounds(
+                                              LatLngBounds(
+                                                northeast: LatLng(
+                                                    northEastLatitude,
+                                                    northEastLongitude),
+                                                southwest: LatLng(
+                                                    southWestLatitude,
+                                                    southWestLongitude),
+                                              ),
+                                              100.0,
+                                            ),
+                                          );
+                                          await _createPolylines(
+                                              startLatitude,
+                                              startLongitude,
+                                              destinationLatitude,
+                                              destinationLongitude);
+
+                                          setState(() {
+                                            isDestinationLocation = false;
+                                            valuepro.isNextButton = true;
+                                          });
+
+                                          //Navigator.of(context).pop();
+                                        }
+                                        else{
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text("Alert",
+                                                      style: TextStyle(
+                                                          color: Colors.red)),
+                                                  content: const Text(
+                                                      "Please select a destination"),
+                                                  actions: <Widget>[
+                                                    TextButton(
+                                                      child: const Text("OK"),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                    )
+                                                  ],
+                                                );
+                                              });
+                                        }
+
                                       },
                                     ),
                                     //cargo button
@@ -1316,7 +1341,7 @@ class _DashBoardState extends State<DashBoard> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (context) =>
-                                                    const SubScription()));
+                                                    const CargoScreen()));
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:

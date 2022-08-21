@@ -37,6 +37,7 @@ class CargoScreen extends StatefulWidget {
 }
 
 class _CargoScreenState extends State<CargoScreen> {
+  final _formKey = GlobalKey<FormState>();
   String _mapStyle = "";
   User _user;
   Socket socket;
@@ -157,312 +158,671 @@ class _CargoScreenState extends State<CargoScreen> {
     );
     return Scaffold(
       drawer: Custom_Drawer(user: _user),
-      body: Container(
-        child: SafeArea(
-          child: Stack(
-            children: [
-              lat == 0 ? Container() : googleMap,
-              const TopBar(),
-              Visibility(
-                visible: isDestinationLocation,
-                child: Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: SafeArea(
-                    child: AnimatedOpacity(
-                      opacity: 1,
-                      duration: const Duration(milliseconds: 200),
-                      child: Container(
-                        height: 400,
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0))),
+      body: Form(
+        key: _formKey,
+        child: Container(
+          child: SafeArea(
+            child: Stack(
+              children: [
+                lat == 0 ? Container() : googleMap,
+                const TopBar(),
+                Visibility(
+                  visible: isDestinationLocation,
+                  child: Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      child: AnimatedOpacity(
+                        opacity: 1,
+                        duration: const Duration(milliseconds: 200),
                         child: Container(
-                          margin: const EdgeInsets.only(
-                              top: 20, bottom: 5, right: 10, left: 10),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Container(
-                                  //location card
-                                  child: Card(
-                                    elevation: 15,
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    child: Container(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child: Column(
-                                              children: const [
-                                                Icon(
-                                                  Icons.circle,
-                                                  color: Colors.black,
-                                                  size: 10,
-                                                ),
-                                                SizedBox(
-                                                    height: 40,
-                                                    child: VerticalDivider()),
-                                                Icon(
-                                                  Icons.circle,
-                                                  color: Colors.black,
-                                                  size: 10,
-                                                )
-                                              ],
+                          height: 400,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0))),
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                top: 20, bottom: 5, right: 10, left: 10),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Container(
+                                    //location card
+                                    child: Card(
+                                      elevation: 15,
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(10))),
+                                      child: Container(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.symmetric(
+                                                  horizontal: 10),
+                                              child: Column(
+                                                children: const [
+                                                  Icon(
+                                                    Icons.circle,
+                                                    color: Colors.black,
+                                                    size: 10,
+                                                  ),
+                                                  SizedBox(
+                                                      height: 40,
+                                                      child: VerticalDivider()),
+                                                  Icon(
+                                                    Icons.circle,
+                                                    color: Colors.black,
+                                                    size: 10,
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              InkWell(
-                                                onTap: () async {
-                                                  LocationResult result =
-                                                      await Navigator.of(
-                                                              context)
-                                                          .push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PlacePicker(
-                                                        kgoogleMapKey,
-                                                        displayLocation:
-                                                            LatLng(lat, lon),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                InkWell(
+                                                  onTap: () async {
+                                                    LocationResult result =
+                                                        await Navigator.of(
+                                                                context)
+                                                            .push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlacePicker(
+                                                          kgoogleMapKey,
+                                                          displayLocation:
+                                                              LatLng(lat, lon),
+                                                        ),
+                                                      ),
+                                                    );
+
+                                                    final coordinates =
+                                                        Coordinates(
+                                                            result
+                                                                .latLng.latitude,
+                                                            result.latLng
+                                                                .longitude);
+                                                    print("result" +
+                                                        result.toString());
+                                                    var addresses = await Geocoder
+                                                        .local
+                                                        .findAddressesFromCoordinates(
+                                                            coordinates);
+
+                                                    setState(() {
+                                                      address = addresses.first;
+                                                    });
+                                                    setState(() {});
+                                                  },
+                                                  child: Container(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      width:
+                                                          sizeScreenB.width - 100,
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                      child: Text(
+                                                        address != null
+                                                            ? address.addressLine
+                                                            : "Pick up Location ",
+                                                        maxLines: 5,
+                                                        textAlign: TextAlign.left,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal,
+                                                                fontSize: 15,
+                                                                color:
+                                                                    Colors.black),
+                                                      )),
+                                                ),
+                                                Center(
+                                                  child: Container(
+                                                    width: 280,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                      border: Border(
+                                                        bottom: BorderSide(
+                                                            color: Colors.grey,
+                                                            width: 1.0),
                                                       ),
                                                     ),
-                                                  );
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () async {
+                                                    var prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                    LocationResult result =
+                                                        await Navigator.of(
+                                                                context)
+                                                            .push(
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            PlacePicker(
+                                                          kgoogleMapKey,
+                                                          //  displayLocation: LatLng(lat, lon),
+                                                          localizationItem:
+                                                              LocalizationItem(),
+                                                        ),
+                                                      ),
+                                                    );
 
-                                                  final coordinates =
-                                                      Coordinates(
-                                                          result
-                                                              .latLng.latitude,
-                                                          result.latLng
-                                                              .longitude);
-                                                  print("result" +
-                                                      result.toString());
-                                                  var addresses = await Geocoder
-                                                      .local
-                                                      .findAddressesFromCoordinates(
-                                                          coordinates);
-
-                                                  setState(() {
-                                                    address = addresses.first;
-                                                  });
-                                                  setState(() {});
-                                                },
-                                                child: Container(
-                                                    alignment:
-                                                        Alignment.topLeft,
+                                                    final coordinates =
+                                                        Coordinates(
+                                                            result
+                                                                .latLng.latitude,
+                                                            result.latLng
+                                                                .longitude);
+                                                    var addresses = await Geocoder
+                                                        .local
+                                                        .findAddressesFromCoordinates(
+                                                            coordinates);
+                                                    setState(() {
+                                                      destinationAddress =
+                                                          addresses.first;
+                                                    });
+                                                    setState(() {});
+                                                    prefs.setStringList("loc", [
+                                                      destinationAddress
+                                                          .addressLine
+                                                    ]);
+                                                  },
+                                                  child: Container(
+                                                    margin:
+                                                        const EdgeInsets.all(10),
                                                     width:
                                                         sizeScreenB.width - 100,
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            10),
                                                     child: Text(
-                                                      address != null
-                                                          ? address.addressLine
-                                                          : "Pick up Location ",
-                                                      maxLines: 5,
-                                                      textAlign: TextAlign.left,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal,
-                                                              fontSize: 15,
-                                                              color:
-                                                                  Colors.black),
-                                                    )),
-                                              ),
-                                              Center(
-                                                child: Container(
-                                                  width: 280,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                          color: Colors.grey,
-                                                          width: 1.0),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () async {
-                                                  var prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
-                                                  LocationResult result =
-                                                      await Navigator.of(
-                                                              context)
-                                                          .push(
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          PlacePicker(
-                                                        kgoogleMapKey,
-                                                        //  displayLocation: LatLng(lat, lon),
-                                                        localizationItem:
-                                                            LocalizationItem(),
+                                                      destinationAddress != null
+                                                          ? destinationAddress
+                                                              .addressLine
+                                                          : " I am going to",
+                                                      style: GoogleFonts.poppins(
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                        fontSize: 15,
+                                                        color:
+                                                            HexColor(textColor),
                                                       ),
                                                     ),
-                                                  );
-
-                                                  final coordinates =
-                                                      Coordinates(
-                                                          result
-                                                              .latLng.latitude,
-                                                          result.latLng
-                                                              .longitude);
-                                                  var addresses = await Geocoder
-                                                      .local
-                                                      .findAddressesFromCoordinates(
-                                                          coordinates);
-                                                  setState(() {
-                                                    destinationAddress =
-                                                        addresses.first;
-                                                  });
-                                                  setState(() {});
-                                                  prefs.setStringList("loc", [
-                                                    destinationAddress
-                                                        .addressLine
-                                                  ]);
-                                                },
-                                                child: Container(
-                                                  margin:
-                                                      const EdgeInsets.all(10),
-                                                  width:
-                                                      sizeScreenB.width - 100,
-                                                  child: Text(
-                                                    destinationAddress != null
-                                                        ? destinationAddress
-                                                            .addressLine
-                                                        : " I am going to",
-                                                    style: GoogleFonts.poppins(
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      fontSize: 15,
-                                                      color:
-                                                          HexColor(textColor),
-                                                    ),
                                                   ),
                                                 ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  //choose parcel type
+                                  Container(
+                                      margin: const EdgeInsets.all(20),
+                                      alignment: Alignment.center,
+                                      child: const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Choose your parcel"),
+                                      )),
+                                  Container(
+                                      height: 125,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: 5,
+                                        itemBuilder: (_, i) {
+                                          return categoryList(i, isSelected[i]);
+                                        },
+                                      )),
+                                  //package size
+                                  Container(
+                                      margin: const EdgeInsets.all(20),
+                                      alignment: Alignment.center,
+                                      child: const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Package Size"),
+                                      )),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Card(
+                                      elevation: 15,
+                                      child: Neumorphic(
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: TextFormField(
+                                            keyboardType: TextInputType.number,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter package size';
+                                              }
+                                              return null;
+                                            },
+                                            controller: pkgsizetextcontrlr,
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              isDense: true,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  //package weight
+                                  Container(
+                                      margin: const EdgeInsets.all(20),
+                                      alignment: Alignment.center,
+                                      child: const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Package Weight"),
+                                      )),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Card(
+                                      elevation: 15,
+                                      child: Neumorphic(
+                                        child: Container(
+                                          margin: const EdgeInsets.all(10),
+                                          child: TextFormField(
+                                            keyboardType: TextInputType.number,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter package weight';
+                                              }
+                                              return null;
+                                            },
+                                            controller: pkgweighttextcontrlr,
+                                            decoration: const InputDecoration(
+                                              border: InputBorder.none,
+                                              focusedBorder: InputBorder.none,
+                                              enabledBorder: InputBorder.none,
+                                              errorBorder: InputBorder.none,
+                                              isDense: true,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  //3 box to upload image
+                                  Container(
+                                      margin: const EdgeInsets.all(20),
+                                      alignment: Alignment.center,
+                                      child: const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Upload Cargo Image"),
+                                      )),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(horizontal:10,vertical: 10),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Card(
+                                          elevation: 15,
+                                          child: GestureDetector(
+                                            child: Container(
+                                              height: 90,
+                                              width: 90,
+                                             color: Colors.white,
+                                              child: Center(
+                                                child: carSide1File == null
+                                                    ? const Icon(
+                                                        Icons.add_a_photo,
+                                                        size: 40,
+                                                        color: Colors.black,
+                                                      )
+                                                    : Image.file(
+                                                  File(carSide1File.path),
+                                                        fit: BoxFit.cover,
+                                                      ),
                                               ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                //choose parcel type
-                                Container(
-                                    margin: const EdgeInsets.all(20),
-                                    alignment: Alignment.center,
-                                    child: const Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Choose your parcel"),
-                                    )),
-                                Container(
-                                    height: 125,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: 5,
-                                      itemBuilder: (_, i) {
-                                        return categoryList(i, isSelected[i]);
-                                      },
-                                    )),
-                                //package size
-                                Container(
-                                    margin: const EdgeInsets.all(20),
-                                    alignment: Alignment.center,
-                                    child: const Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Package Size"),
-                                    )),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Card(
-                                    elevation: 15,
-                                    child: Neumorphic(
-                                      child: Container(
-                                        margin: const EdgeInsets.all(10),
-                                        child: TextFormField(
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter some text';
-                                            }
-                                            return null;
-                                          },
-                                          controller: pkgsizetextcontrlr,
-                                          decoration: const InputDecoration(
-                                            border: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            errorBorder: InputBorder.none,
-                                            isDense: true,
+                                            ),
+                                            onTap: () async {
+                                              final _picker = ImagePicker();
+                                              carSide1File = await _picker.getImage(
+                                                  source: ImageSource.gallery);
+                                              setState(() {});
+                                            },
                                           ),
                                         ),
-                                      ),
+                                        Card(
+                                          elevation: 15,
+                                          child: GestureDetector(
+                                            child: Container(
+                                              height: 90,
+                                              width: 90,
+                                              color: Colors.white,
+                                              child: Center(
+                                                child: carSide2File == null
+                                                    ? const Icon(
+                                                  Icons.add_a_photo,
+                                                  size: 40,
+                                                  color: Colors.black,
+                                                )
+                                                    : Image.file(
+                                                  File(carSide2File.path),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () async {
+                                              final _picker = ImagePicker();
+                                              carSide2File = await _picker.getImage(
+                                                  source: ImageSource.gallery);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                        Card(
+                                          elevation: 15,
+                                          child: GestureDetector(
+                                            child: Container(
+                                              height: 90,
+                                              width: 90,
+                                              color: Colors.white,
+                                              child: Center(
+                                                child: carSide3File == null
+                                                    ? const Icon(
+                                                  Icons.add_a_photo,
+                                                  size: 40,
+                                                  color: Colors.black,
+                                                )
+                                                    : Image.file(
+                                                  File(carSide3File.path),
+                                                  width: 90,
+                                                  height: 90,
+                                                  //fit: BoxFit.contain,
+                                                ),
+                                              ),
+                                            ),
+                                            onTap: () async {
+                                              final _picker = ImagePicker();
+                                              carSide3File = await _picker.getImage(
+                                                  source: ImageSource.gallery);
+                                              setState(() {});
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                ),
-                                //package weight
-                                Container(
+                                  Container(
                                     margin: const EdgeInsets.all(20),
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        //back button
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        DashBoard()));
+                                          },
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<Color>(
+                                                    Colors.white60),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            )),
+                                            padding: MaterialStateProperty.all<
+                                                EdgeInsetsGeometry>(
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 50),
+                                            ),
+                                          ),
+                                          child: Text("Back",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: Colors.black)),
+                                        ),
+                                        //continue button
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            if(address!=null && destinationAddress!=null){
+                                              if(parcelType!=null){
+                                                if(carSide1File!=null && carSide2File!=null && carSide3File!=null){
+                                                  if (_formKey.currentState.validate()) {
+                                                    bookingProvider.setIsNext=true;
+                                                    setState(() {
+                                                      isDestinationLocation = false;
+                                                    });
+                                                  }
+                                                }else{
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext context) {
+                                                        return AlertDialog(
+                                                          title: const Text("Error"),
+                                                          content: const Text(
+                                                              "Please upload all images"),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              child: const Text(
+                                                                  "OK"),
+                                                              onPressed: () {
+                                                                Navigator.pop(
+                                                                    context);
+                                                              },
+                                                            )
+                                                          ],
+                                                        );
+                                                      });
+                                                }
+
+                                              }else{
+                                                showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        elevation: 10,
+                                                        title: const Text("Error",
+                                                            style: TextStyle(
+                                                                color: Colors.red)),
+                                                        content: const Text(
+                                                            "Please select parcel type"),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            child: const Text("OK"),
+                                                            onPressed: () {
+                                                              Navigator.of(context)
+                                                                  .pop();
+                                                            },
+                                                          )
+                                                        ],
+                                                      );
+                                                    });
+                                              }
+                                            }else{
+                                              showDialog(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      elevation: 10,
+                                                      title: const Text("Error",
+                                                          style: TextStyle(
+                                                              color: Colors.red)),
+                                                      content: const Text(
+                                                          "Please select destination location"),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          child: const Text("OK"),
+                                                          onPressed: () {
+                                                            Navigator.of(context)
+                                                                .pop();
+                                                          },
+                                                        )
+                                                      ],
+                                                    );
+                                                  });
+                                              }
+                                            },
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                                MaterialStateProperty.all<Color>(
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .secondary),
+                                            shape: MaterialStateProperty.all<
+                                                    RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                            )),
+                                            padding: MaterialStateProperty.all<
+                                                EdgeInsetsGeometry>(
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 40),
+                                            ),
+                                          ),
+                                          child: Text("continue",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: Colors.white)),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Visibility(
+                  visible: bookingProvider.getIsNext,
+                    child: Container(
+                    alignment: Alignment.bottomCenter,
+                     child: Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: SafeArea(
+                      child: AnimatedOpacity(
+                        opacity: 1,
+                        duration: const Duration(milliseconds: 200),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(20.0),
+                                  topRight: Radius.circular(20.0))),
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                                top: 20, bottom: 5, right: 10, left: 10),
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+
+                                  Container(
+                                      margin: const EdgeInsets.all(20),
+                                      alignment: Alignment.center,
+                                      child: const Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Select your cargo"),
+                                      ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.fromLTRB(20,0,10,0),
                                     alignment: Alignment.center,
                                     child: const Align(
                                       alignment: Alignment.centerLeft,
-                                      child: Text("Package Weight"),
-                                    )),
-                                Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  child: Card(
-                                    elevation: 15,
-                                    child: Neumorphic(
-                                      child: Container(
-                                        margin: const EdgeInsets.all(10),
-                                        child: TextFormField(
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return 'Please enter some text';
-                                            }
-                                            return null;
-                                          },
-                                          controller: pkgweighttextcontrlr,
-                                          decoration: const InputDecoration(
-                                            border: InputBorder.none,
-                                            focusedBorder: InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            errorBorder: InputBorder.none,
-                                            isDense: true,
-                                          ),
-                                        ),
-                                      ),
+                                      child: Text("ahhjajh vhjajh bhugaj gtyu gsy hjahs gyia hj hag"),
                                     ),
                                   ),
-                                ),
-                                //upload image
-                                Container(
-                                  margin: const EdgeInsets.all(20),
-                                  alignment: Alignment.center,
+                                  const SizedBox(height: 20,),
+                                  Container(
+                                      height: 125,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: 3,
+                                        itemBuilder: (_, i) {
+                                          return vehicleList(i, veh[i]);
+                                        },
+                                      ),),
+                                  const SizedBox(height: 20,),
+
+                                  Container(
+                                    width: 450,
                                     child: ElevatedButton(
+                                      onPressed: () {
+                                        print("error stat :${bookingProvider.getError}");
+                                        //field must not be null
+                                       bookingProvider.setBookingDetails=AddBookingDetails(
+                                           userId: _user.sId,
+                                           source: address.addressLine,
+                                           destination: destinationAddress.addressLine,
+                                           vehicleType: vehicleType,
+                                           parcelType: parcelType,
+                                           sourceLocation: [
+                                             address.coordinates.latitude,
+                                             address.coordinates.longitude
+                                           ],
+                                           destinationLocation: [
+                                             destinationAddress.coordinates.latitude,
+                                             destinationAddress.coordinates.longitude
+                                           ],
+                                           currentLocation: [
+                                             address.coordinates.latitude,
+                                             address.coordinates.longitude
+                                           ],
+                                           isPre: false,
+                                           distance: "1234",
+                                           tripDate: DateTime.now(),
+                                           isRound: false,
+                                           amount: 500,
+                                           payment: "payment_gateway",
+                                           promoCode: "",
+                                           packageSize: pkgsizetextcontrlr.text,
+                                           packageWeight: pkgweighttextcontrlr.text,
+                                           packageImages: [],
+                                           roundDropLocation: []
+                                       );
+                                       bookingProvider.addBookingProvider(
+                                           context,
+                                           file1: carSide1File.path,
+                                           file2: carSide2File.path,
+                                           file3: carSide3File.path
+                                       );
+                                        print("error stat 2 :${bookingProvider.getShowDetails}");
+                                        print(bookingProvider.getCargoBookingId);
+                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
                                         MaterialStateProperty.all<Color>(
@@ -478,230 +838,18 @@ class _CargoScreenState extends State<CargoScreen> {
                                         padding: MaterialStateProperty.all<
                                             EdgeInsetsGeometry>(
                                           const EdgeInsets.symmetric(
-                                              vertical: 15, horizontal: 40),
+                                              vertical: 15, horizontal: 50),
                                         ),
                                       ),
-                                      onPressed: showVehicle,
-                                      child: const Text("Upload Image"),
+                                      child: Text("Continue",
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Colors.white)),
                                     ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.all(20),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      //back button
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DashBoard()));
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Colors.white60),
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                          )),
-                                          padding: MaterialStateProperty.all<
-                                              EdgeInsetsGeometry>(
-                                            const EdgeInsets.symmetric(
-                                                vertical: 15, horizontal: 50),
-                                          ),
-                                        ),
-                                        child: Text("Back",
-                                            style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                                color: Colors.black)),
-                                      ),
-                                      //continue button
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          bookingProvider.setIsNext=true;
-                                          setState(() {
-                                            isDestinationLocation = false;
-                                          });
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  Theme.of(context)
-                                                      .colorScheme
-                                                      .secondary),
-                                          shape: MaterialStateProperty.all<
-                                                  RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(12.0),
-                                          )),
-                                          padding: MaterialStateProperty.all<
-                                              EdgeInsetsGeometry>(
-                                            const EdgeInsets.symmetric(
-                                                vertical: 15, horizontal: 40),
-                                          ),
-                                        ),
-                                        child: Text("continue",
-                                            style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                                color: Colors.white)),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Visibility(
-                visible: bookingProvider.getIsNext,
-                  child: Container(
-                  alignment: Alignment.bottomCenter,
-                   child: Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  child: SafeArea(
-                    child: AnimatedOpacity(
-                      opacity: 1,
-                      duration: const Duration(milliseconds: 200),
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20.0),
-                                topRight: Radius.circular(20.0))),
-                        child: Container(
-                          margin: const EdgeInsets.only(
-                              top: 20, bottom: 5, right: 10, left: 10),
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-
-                                Container(
-                                    margin: const EdgeInsets.all(20),
-                                    alignment: Alignment.center,
-                                    child: const Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Select your cargo"),
-                                    ),
-                                ),
-                                Container(
-                                  margin: const EdgeInsets.fromLTRB(20,0,10,0),
-                                  alignment: Alignment.center,
-                                  child: const Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text("ahhjajh vhjajh bhugaj gtyu gsy hjahs gyia hj hag"),
-                                  ),
-                                ),
-                                const SizedBox(height: 20,),
-                                Container(
-                                    height: 125,
-                                    child: ListView.builder(
-                                      scrollDirection: Axis.horizontal,
-                                      itemCount: 3,
-                                      itemBuilder: (_, i) {
-                                        return vehicleList(i, veh[i]);
-                                      },
-                                    ),),
-                                const SizedBox(height: 20,),
-
-                                Container(
-                                  width: 450,
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      print("error stat :${bookingProvider.getError}");
-                                      //field must not be null
-                                     bookingProvider.setBookingDetails=AddBookingDetails(
-                                         userId: _user.sId,
-                                         source: address.addressLine,
-                                         destination: destinationAddress.addressLine,
-                                         vehicleType: vehicleType,
-                                         parcelType: parcelType,
-                                         sourceLocation: [
-                                           address.coordinates.latitude,
-                                           address.coordinates.longitude
-                                         ],
-                                         destinationLocation: [
-                                           destinationAddress.coordinates.latitude,
-                                           destinationAddress.coordinates.longitude
-                                         ],
-                                         currentLocation: [
-                                           address.coordinates.latitude,
-                                           address.coordinates.longitude
-                                         ],
-                                         isPre: false,
-                                         distance: "1234",
-                                         tripDate: DateTime.now(),
-                                         isRound: false,
-                                         amount: 500,
-                                         payment: "payment_gateway",
-                                         promoCode: "",
-                                         packageSize: pkgsizetextcontrlr.text,
-                                         packageWeight: pkgweighttextcontrlr.text,
-                                         packageImages: [],
-                                         roundDropLocation: []
-                                     );
-                                     bookingProvider.addBookingProvider(context);
-                                      print("error stat 2 :${bookingProvider.getShowDetails}");
-                                     // if(bookingProvider.abdResponse.status==true){
-                                     //   setState(() {
-                                     //     detail=true;
-                                     //     isNextButton = false;
-                                     //   });
-                                     // }else{
-                                     //   //showError(context, "please try again");
-                                     //   setState(() {
-                                     //     detail=false;
-                                     //     isNextButton = true;
-                                     //   });
-                                     // }
-                                     },
-                                    style: ButtonStyle(
-                                      backgroundColor:
-                                      MaterialStateProperty.all<Color>(
-                                          Theme.of(context)
-                                              .colorScheme
-                                              .secondary),
-                                      shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                          RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(12.0),
-                                          )),
-                                      padding: MaterialStateProperty.all<
-                                          EdgeInsetsGeometry>(
-                                        const EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 50),
-                                      ),
-                                    ),
-                                    child: Text("Continue",
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                            color: Colors.white)),
-                                  ),
-                                )
-                              ],
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -711,296 +859,296 @@ class _CargoScreenState extends State<CargoScreen> {
                 ),
               ),
             ),
-          ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Visibility(
-                  visible: bookingProvider.getShowDetails,
-                  child: Container(
-                    alignment: Alignment.bottomCenter,
-                    child: Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: SafeArea(
-                        child: AnimatedOpacity(
-                          opacity: 1,
-                          duration: const Duration(milliseconds: 200),
-                          child: Container(
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(20.0),
-                                    topRight: Radius.circular(20.0))),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Visibility(
+                    visible: bookingProvider.getShowDetails,
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: Positioned(
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        child: SafeArea(
+                          child: AnimatedOpacity(
+                            opacity: 1,
+                            duration: const Duration(milliseconds: 200),
                             child: Container(
-                              margin: const EdgeInsets.only(
-                                  top: 20, bottom: 5, right: 10, left: 10),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
+                              decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20.0),
+                                      topRight: Radius.circular(20.0))),
+                              child: Container(
+                                margin: const EdgeInsets.only(
+                                    top: 20, bottom: 5, right: 10, left: 10),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: <Widget>[
 
-                                    Container(
-                                      child: Card(
-                                        elevation: 15,
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(10))),
-                                        child: Container(
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                            children: [
-                                              Container(
-                                                margin: const EdgeInsets.symmetric(
-                                                    horizontal: 10),
-                                                child: Column(
-                                                  children: const [
-                                                    Icon(
-                                                      Icons.circle,
-                                                      color: Colors.black,
-                                                      size: 10,
-                                                    ),
-                                                    SizedBox(
-                                                        height: 40,
-                                                        child: VerticalDivider()),
-                                                    Icon(
-                                                      Icons.circle,
-                                                      color: Colors.black,
-                                                      size: 10,
-                                                    )
-                                                  ],
+                                      Container(
+                                        child: Card(
+                                          elevation: 15,
+                                          shape: const RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(10))),
+                                          child: Container(
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              children: [
+                                                Container(
+                                                  margin: const EdgeInsets.symmetric(
+                                                      horizontal: 10),
+                                                  child: Column(
+                                                    children: const [
+                                                      Icon(
+                                                        Icons.circle,
+                                                        color: Colors.black,
+                                                        size: 10,
+                                                      ),
+                                                      SizedBox(
+                                                          height: 40,
+                                                          child: VerticalDivider()),
+                                                      Icon(
+                                                        Icons.circle,
+                                                        color: Colors.black,
+                                                        size: 10,
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                              Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      LocationResult result =
-                                                      await Navigator.of(
-                                                          context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlacePicker(
-                                                                kgoogleMapKey,
-                                                                displayLocation:
-                                                                LatLng(lat, lon),
-                                                              ),
+                                                Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        LocationResult result =
+                                                        await Navigator.of(
+                                                            context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PlacePicker(
+                                                                  kgoogleMapKey,
+                                                                  displayLocation:
+                                                                  LatLng(lat, lon),
+                                                                ),
+                                                          ),
+                                                        );
+
+                                                        final coordinates =
+                                                        Coordinates(
+                                                            result
+                                                                .latLng.latitude,
+                                                            result.latLng
+                                                                .longitude);
+                                                        print("result" +
+                                                            result.toString());
+                                                        var addresses = await Geocoder
+                                                            .local
+                                                            .findAddressesFromCoordinates(
+                                                            coordinates);
+
+                                                        setState(() {
+                                                          address = addresses.first;
+                                                        });
+                                                        setState(() {});
+                                                      },
+                                                      child: Container(
+                                                          alignment:
+                                                          Alignment.topLeft,
+                                                          width:
+                                                          sizeScreenB.width - 100,
+                                                          margin:
+                                                          const EdgeInsets.all(
+                                                              10),
+                                                          child: Text(
+                                                            address != null
+                                                                ? address.addressLine
+                                                                : "Pick up Location ",
+                                                            maxLines: 5,
+                                                            textAlign: TextAlign.left,
+                                                            style:
+                                                            GoogleFonts.poppins(
+                                                                fontWeight:
+                                                                FontWeight
+                                                                    .normal,
+                                                                fontSize: 15,
+                                                                color:
+                                                                Colors.black),
+                                                          )),
+                                                    ),
+                                                    Center(
+                                                      child: Container(
+                                                        width: 280,
+                                                        decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            bottom: BorderSide(
+                                                                color: Colors.grey,
+                                                                width: 1.0),
+                                                          ),
                                                         ),
-                                                      );
+                                                      ),
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        var prefs =
+                                                        await SharedPreferences
+                                                            .getInstance();
+                                                        LocationResult result =
+                                                        await Navigator.of(
+                                                            context)
+                                                            .push(
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PlacePicker(
+                                                                  kgoogleMapKey,
+                                                                  //  displayLocation: LatLng(lat, lon),
+                                                                  localizationItem:
+                                                                  LocalizationItem(),
+                                                                ),
+                                                          ),
+                                                        );
 
-                                                      final coordinates =
-                                                      Coordinates(
-                                                          result
-                                                              .latLng.latitude,
-                                                          result.latLng
-                                                              .longitude);
-                                                      print("result" +
-                                                          result.toString());
-                                                      var addresses = await Geocoder
-                                                          .local
-                                                          .findAddressesFromCoordinates(
-                                                          coordinates);
-
-                                                      setState(() {
-                                                        address = addresses.first;
-                                                      });
-                                                      setState(() {});
-                                                    },
-                                                    child: Container(
-                                                        alignment:
-                                                        Alignment.topLeft,
+                                                        final coordinates =
+                                                        Coordinates(
+                                                            result
+                                                                .latLng.latitude,
+                                                            result.latLng
+                                                                .longitude);
+                                                        var addresses = await Geocoder
+                                                            .local
+                                                            .findAddressesFromCoordinates(
+                                                            coordinates);
+                                                        setState(() {
+                                                          destinationAddress =
+                                                              addresses.first;
+                                                        });
+                                                        setState(() {});
+                                                        prefs.setStringList("loc", [
+                                                          destinationAddress
+                                                              .addressLine
+                                                        ]);
+                                                      },
+                                                      child: Container(
+                                                        margin:
+                                                        const EdgeInsets.all(10),
                                                         width:
                                                         sizeScreenB.width - 100,
-                                                        margin:
-                                                        const EdgeInsets.all(
-                                                            10),
                                                         child: Text(
-                                                          address != null
-                                                              ? address.addressLine
-                                                              : "Pick up Location ",
-                                                          maxLines: 5,
-                                                          textAlign: TextAlign.left,
-                                                          style:
-                                                          GoogleFonts.poppins(
-                                                              fontWeight:
-                                                              FontWeight
-                                                                  .normal,
-                                                              fontSize: 15,
-                                                              color:
-                                                              Colors.black),
-                                                        )),
-                                                  ),
-                                                  Center(
-                                                    child: Container(
-                                                      width: 280,
-                                                      decoration:
-                                                      const BoxDecoration(
-                                                        border: Border(
-                                                          bottom: BorderSide(
-                                                              color: Colors.grey,
-                                                              width: 1.0),
+                                                          destinationAddress != null
+                                                              ? destinationAddress
+                                                              .addressLine
+                                                              : " I am going to",
+                                                          style: GoogleFonts.poppins(
+                                                            fontWeight:
+                                                            FontWeight.normal,
+                                                            fontSize: 15,
+                                                            color:
+                                                            HexColor(textColor),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
-                                                  ),
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      var prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
-                                                      LocationResult result =
-                                                      await Navigator.of(
-                                                          context)
-                                                          .push(
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              PlacePicker(
-                                                                kgoogleMapKey,
-                                                                //  displayLocation: LatLng(lat, lon),
-                                                                localizationItem:
-                                                                LocalizationItem(),
-                                                              ),
-                                                        ),
-                                                      );
-
-                                                      final coordinates =
-                                                      Coordinates(
-                                                          result
-                                                              .latLng.latitude,
-                                                          result.latLng
-                                                              .longitude);
-                                                      var addresses = await Geocoder
-                                                          .local
-                                                          .findAddressesFromCoordinates(
-                                                          coordinates);
-                                                      setState(() {
-                                                        destinationAddress =
-                                                            addresses.first;
-                                                      });
-                                                      setState(() {});
-                                                      prefs.setStringList("loc", [
-                                                        destinationAddress
-                                                            .addressLine
-                                                      ]);
-                                                    },
-                                                    child: Container(
-                                                      margin:
-                                                      const EdgeInsets.all(10),
-                                                      width:
-                                                      sizeScreenB.width - 100,
-                                                      child: Text(
-                                                        destinationAddress != null
-                                                            ? destinationAddress
-                                                            .addressLine
-                                                            : " I am going to",
-                                                        style: GoogleFonts.poppins(
-                                                          fontWeight:
-                                                          FontWeight.normal,
-                                                          fontSize: 15,
-                                                          color:
-                                                          HexColor(textColor),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 20,),
+                                      const Text("Your Cargo info"),
+                                      const SizedBox(height: 20,),
+                                      const Text("Driver info"),
+                                      const SizedBox(height: 10,),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                        Row(
+                                          children: [
+                                            const CircleAvatar(backgroundColor: Colors.yellow,radius: 25,),
+                                            Column(children: [
+                                              const Text("Driver name"),
+                                              const Text("Jogn mark"),
+                                            ],),
+                                          ],
+                                        ),
+                                          Column(children: [
+                                          const Text("OTP"),
+                                          const Text("4546"),
+                                        ],),
+                                      ],),
+                                      const Divider(),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              const Text("Arriving Time"),
+                                              const Text("12.30"),
                                             ],
                                           ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20,),
-                                    const Text("Your Cargo info"),
-                                    const SizedBox(height: 20,),
-                                    const Text("Driver info"),
-                                    const SizedBox(height: 10,),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                      Row(
-                                        children: [
-                                          const CircleAvatar(backgroundColor: Colors.yellow,radius: 25,),
-                                          Column(children: [
-                                            const Text("Driver name"),
-                                            const Text("Jogn mark"),
-                                          ],),
+                                          Column(
+                                            children: [
+                                              const Text("Vehicle No"),
+                                              const Text("LX05E123"),
+                                            ],
+                                          ),
+                                          Column(
+                                            children: [
+                                              const Text("Vehicle Type"),
+                                              const Text("Auto"),
+                                            ],
+                                          ),
                                         ],
                                       ),
-                                        Column(children: [
-                                        const Text("OTP"),
-                                        const Text("4546"),
-                                      ],),
-                                    ],),
-                                    const Divider(),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            const Text("Arriving Time"),
-                                            const Text("12.30"),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            const Text("Vehicle No"),
-                                            const Text("LX05E123"),
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            const Text("Vehicle Type"),
-                                            const Text("Auto"),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                    const Divider(),
-                                    Container(
-                                      width: 450,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          // Navigator.push(context, MaterialPageRoute(builder: (context)=>DashBoard()));
-                                          // setState(() {
-                                          //   detail=true;
-                                          // });
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                          MaterialStateProperty.all<Color>(
-                                              Theme.of(context)
-                                                  .colorScheme
-                                                  .secondary),
-                                          shape: MaterialStateProperty.all<
-                                              RoundedRectangleBorder>(
-                                              RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(12.0),
-                                              )),
-                                          padding: MaterialStateProperty.all<
-                                              EdgeInsetsGeometry>(
-                                            const EdgeInsets.symmetric(
-                                                vertical: 15, horizontal: 50),
+                                      const Divider(),
+                                      Container(
+                                        width: 450,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            // Navigator.push(context, MaterialPageRoute(builder: (context)=>DashBoard()));
+                                            // setState(() {
+                                            //   detail=true;
+                                            // });
+                                          },
+                                          style: ButtonStyle(
+                                            backgroundColor:
+                                            MaterialStateProperty.all<Color>(
+                                                Theme.of(context)
+                                                    .colorScheme
+                                                    .secondary),
+                                            shape: MaterialStateProperty.all<
+                                                RoundedRectangleBorder>(
+                                                RoundedRectangleBorder(
+                                                  borderRadius:
+                                                  BorderRadius.circular(12.0),
+                                                )),
+                                            padding: MaterialStateProperty.all<
+                                                EdgeInsetsGeometry>(
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 15, horizontal: 50),
+                                            ),
                                           ),
+                                          child: Text("Continue",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: Colors.white)),
                                         ),
-                                        child: Text("Continue",
-                                            style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 15,
-                                                color: Colors.white)),
-                                      ),
-                                    )
-                                  ],
+                                      )
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -1009,9 +1157,9 @@ class _CargoScreenState extends State<CargoScreen> {
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -1243,189 +1391,6 @@ class _CargoScreenState extends State<CargoScreen> {
           ],
         ),
       ),
-    );
-  }
-  void showVehicle() {
-    showModalBottomSheet<void>(
-      isScrollControlled: true,
-      context: context,
-      isDismissible: true,
-      backgroundColor: Colors.transparent,
-      builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-              color: HexColor("FFFFFF"),
-              borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(25.0),
-                  topRight: Radius.circular(25.0))),
-          child: Padding(
-            padding: MediaQuery.of(context).viewInsets,
-            child: StatefulBuilder(builder: (BuildContext context,
-                StateSetter state /*You can rename this!*/) {
-              return Container(
-                margin:
-                const EdgeInsets.only(top: 20, bottom: 5, right: 10, left: 10),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.topLeft,
-                      margin: const EdgeInsets.only(left: 20),
-                      child: Text(
-                        "Cargo Images Upload",
-                        style: GoogleFonts.poppins(
-                            color: HexColor(textColor), fontSize: 15),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          NeumorphicButton(
-                              style:
-                              NeumorphicStyle(color: HexColor("#FFFFFF")),
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  width: 250,
-                                  child: Center(
-                                      child: Text(
-                                        "Front View",
-                                        style: GoogleFonts.poppins(
-                                            color: HexColor("#8B9EB0"),
-                                            fontSize: 18),
-                                      ))),
-                              onPressed: () async {
-                                final _picker = ImagePicker();
-                                carSide1File = await _picker.getImage(
-                                    source: ImageSource.gallery);
-                                state(() {});
-                              }),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          carSide1File == null
-                              ? Container()
-                              : Center(
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.file(
-                                    File(carSide1File.path),
-                                    height: 50,
-                                    width: 45,
-                                    fit: BoxFit.fill,
-                                  )))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          NeumorphicButton(
-                              style:
-                              NeumorphicStyle(color: HexColor("#FFFFFF")),
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  width: 250,
-                                  child: Center(
-                                      child: Text(
-                                        "Leaft View",
-                                        style: GoogleFonts.poppins(
-                                            color: HexColor("#8B9EB0"),
-                                            fontSize: 18),
-                                      ))),
-                              onPressed: () async {
-                                final _picker = ImagePicker();
-                                carSide2File = await _picker.getImage(
-                                    source: ImageSource.gallery);
-                                state(() {});
-                              }),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          carSide2File == null
-                              ? Container()
-                              : Center(
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.file(
-                                    File(carSide2File.path),
-                                    height: 50,
-                                    width: 45,
-                                    fit: BoxFit.fill,
-                                  )))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          NeumorphicButton(
-                              style:
-                              NeumorphicStyle(color: HexColor("#FFFFFF")),
-                              child: Container(
-                                  padding: const EdgeInsets.all(5),
-                                  width: 250,
-                                  child: Center(
-                                      child: Text(
-                                        "Back View",
-                                        style: GoogleFonts.poppins(
-                                            color: HexColor("#8B9EB0"),
-                                            fontSize: 18),
-                                      ))),
-                              onPressed: () async {
-                                final _picker = ImagePicker();
-                                carSide3File = await _picker.getImage(
-                                    source: ImageSource.gallery);
-                                state(() {});
-                              }),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          carSide3File == null
-                              ? Container()
-                              : Center(
-                              child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  child: Image.file(
-                                    File(carSide3File.path),
-                                    height: 50,
-                                    width: 45,
-                                    fit: BoxFit.fill,
-                                  )))
-                        ],
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.only(top: 20, bottom: 20),
-                      child: TextButton(
-                          child: Container(
-                              padding: const EdgeInsets.all(5),
-                              width: 200,
-                              child: Center(
-                                  child: Text(
-                                    "Done",
-                                    style: GoogleFonts.poppins(
-                                        color: Theme.of(context).primaryColor,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold),
-                                  ))),
-                          onPressed: () async {
-                            Navigator.of(context).pop();
-                          }),
-                    ),
-                  ],
-                ),
-              );
-            }),
-          ),
-        );
-      },
     );
   }
 
