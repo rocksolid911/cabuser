@@ -156,7 +156,8 @@ class BookingProvider extends ChangeNotifier {
         String id}) async {
     var dio = Dio();
     dio.options.baseUrl =
-    "http://api.cabandcargo.com//v1.0/";
+    // "http://api.cabandcargo.com//v1.0/";
+    "https://cabandcargo.com/v1.0/";
     Response response;
     var formdata = FormData.fromMap(
         {

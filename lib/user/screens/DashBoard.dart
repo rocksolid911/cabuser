@@ -95,8 +95,8 @@ class _DashBoardState extends State<DashBoard> {
       connectToServer();
       getDriversLocation();
       getRunningRideData();
+      _getCurrentLocation();
     });
-    _getCurrentLocation();
     super.initState();
   }
 
@@ -111,7 +111,7 @@ class _DashBoardState extends State<DashBoard> {
     Varibles.UserId == urlis;
     Varibles.Token == token;
     var response = await dio.get(
-      'http://api.cabandcargo.com/v1.0/user-data/' + urlis,
+      'https://cabandcargo.com/v1.0/user-data/$urlis',
       options: Options(
         headers: {
           "Authorization": token // set content-length
@@ -488,7 +488,7 @@ class _DashBoardState extends State<DashBoard> {
                               data: {
                                 "user_id": _user.sId,
                                 "vehicle_type":
-                                   rideEstimate.data[selectedCab].vehicleType,
+                                    rideEstimate.data[selectedCab].vehicleType,
                                 "amount": rideEstimate.data[selectedCab].amount,
                                 "payment": "payment_gateway",
                                 "source": address.addressLine,
@@ -1204,7 +1204,7 @@ class _DashBoardState extends State<DashBoard> {
                                               fontSize: 15,
                                               color: Colors.white)),
                                       onPressed: () async {
-                                        if(destinationAddress!=null){
+                                        if (destinationAddress != null) {
                                           String startCoordinatesString =
                                               '(${address.coordinates.latitude}, ${address.coordinates.longitude})';
                                           String destinationCoordinatesString =
@@ -1213,8 +1213,8 @@ class _DashBoardState extends State<DashBoard> {
                                           // Start Location Marker
 
                                           Marker startMarker = Marker(
-                                            markerId:
-                                            MarkerId(startCoordinatesString),
+                                            markerId: MarkerId(
+                                                startCoordinatesString),
                                             position: LatLng(
                                                 address.coordinates.latitude,
                                                 address.coordinates.longitude),
@@ -1224,9 +1224,9 @@ class _DashBoardState extends State<DashBoard> {
                                             ),
                                             icon: await BitmapDescriptor
                                                 .fromAssetImage(
-                                                const ImageConfiguration(
-                                                    size: Size(64, 64)),
-                                                'assets/images/car_location.png'),
+                                                    const ImageConfiguration(
+                                                        size: Size(64, 64)),
+                                                    'assets/images/car_location.png'),
                                           );
 
                                           // Destination Location Marker
@@ -1240,11 +1240,13 @@ class _DashBoardState extends State<DashBoard> {
                                                 destinationAddress
                                                     .coordinates.longitude),
                                             infoWindow: InfoWindow(
-                                              title: destinationCoordinatesString,
-                                              snippet:
-                                              destinationAddress.featureName,
+                                              title:
+                                                  destinationCoordinatesString,
+                                              snippet: destinationAddress
+                                                  .featureName,
                                             ),
-                                            icon: BitmapDescriptor.defaultMarker,
+                                            icon:
+                                                BitmapDescriptor.defaultMarker,
                                           );
 
                                           markers.add(startMarker);
@@ -1260,19 +1262,19 @@ class _DashBoardState extends State<DashBoard> {
                                               destinationAddress
                                                   .coordinates.longitude;
                                           double miny = (startLatitude <=
-                                              destinationLatitude)
+                                                  destinationLatitude)
                                               ? startLatitude
                                               : destinationLatitude;
                                           double minx = (startLongitude <=
-                                              destinationLongitude)
+                                                  destinationLongitude)
                                               ? startLongitude
                                               : destinationLongitude;
                                           double maxy = (startLatitude <=
-                                              destinationLatitude)
+                                                  destinationLatitude)
                                               ? destinationLatitude
                                               : startLatitude;
                                           double maxx = (startLongitude <=
-                                              destinationLongitude)
+                                                  destinationLongitude)
                                               ? destinationLongitude
                                               : startLongitude;
 
@@ -1309,8 +1311,7 @@ class _DashBoardState extends State<DashBoard> {
                                           });
 
                                           //Navigator.of(context).pop();
-                                        }
-                                        else{
+                                        } else {
                                           showDialog(
                                               context: context,
                                               builder: (BuildContext context) {
@@ -1332,7 +1333,6 @@ class _DashBoardState extends State<DashBoard> {
                                                 );
                                               });
                                         }
-
                                       },
                                     ),
                                     //cargo button
@@ -1344,7 +1344,7 @@ class _DashBoardState extends State<DashBoard> {
                                                 builder: (context) =>
                                                     const CargoScreen()
                                                 //DeliveryComplete()
-                                            ));
+                                                ));
                                       },
                                       style: ButtonStyle(
                                         backgroundColor:
@@ -1440,10 +1440,13 @@ class _DashBoardState extends State<DashBoard> {
                                                           setState(() {
                                                             selectedCab = index;
                                                           });
-                                                          if(selectedCab==1){
+                                                          if (selectedCab ==
+                                                              1) {
                                                             showModalBottomSheet(
-                                                                context: context,
-                                                                builder: (context) {
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
                                                                   return const CabOption();
                                                                 });
                                                           }
@@ -1459,11 +1462,7 @@ class _DashBoardState extends State<DashBoard> {
                                                             child: Column(
                                                               children: [
                                                                 Image.network(
-                                                                  "http://api.cabandcargo.com/" +
-                                                                      rideEstimate
-                                                                          .data[
-                                                                              index]
-                                                                          .image,
+                                                                  "https://cabandcargo.com/${rideEstimate.data[index].image}",
                                                                   height: 50,
                                                                   width: 50,
                                                                 ),
@@ -1540,7 +1539,7 @@ class _DashBoardState extends State<DashBoard> {
                                                 margin:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 10,
-                                                        horizontal: 20),
+                                                        horizontal: 15),
                                                 child: Row(children: [
                                                   Row(
                                                     mainAxisAlignment:
@@ -1603,7 +1602,7 @@ class _DashBoardState extends State<DashBoard> {
                                                           Container(
                                                             child: TextButton(
                                                                 onPressed:
-                                                              //TODO working code look it up
+                                                                    //TODO working code look it up
                                                                     () async {
                                                                   final result = await Navigator.push(
                                                                       context,
@@ -2337,7 +2336,8 @@ class _DashBoardState extends State<DashBoard> {
                                                         setState(() {
                                                           isDestinationLocation =
                                                               false;
-                                                          valuepro.isNextButton = true;
+                                                          valuepro.isNextButton =
+                                                              true;
                                                         });
 
                                                         Navigator.of(context)
@@ -2502,7 +2502,9 @@ class _DashBoardState extends State<DashBoard> {
                                 ),
                               ))),
                         )
-                      : Container(child: Text("hello"),)
+                      : Container(
+                          child: Text(""),
+                        )
                   : Container(child: Text("hello2")),
               Align(
                 alignment: Alignment.topCenter,
@@ -2630,5 +2632,3 @@ class _DashBoardState extends State<DashBoard> {
     getRunningRideData();
   }
 }
-
-

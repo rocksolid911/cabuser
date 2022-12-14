@@ -8,6 +8,7 @@ import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/svg.dart';
 // import 'package:fluttertoast/fluttertoast.dart';
 import 'package:form_field_validator/form_field_validator.dart';
+import 'package:get/get.dart' as getx;
 import 'package:google_fonts/google_fonts.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -35,11 +36,11 @@ class _UserRegistrationState extends State<UserRegistration> {
   TextEditingController passwordEdit = TextEditingController();
   TextEditingController mobileEdit = TextEditingController();
   TextEditingController nameEdit = TextEditingController();
-   PermissionStatus permissionGranted;
+  PermissionStatus permissionGranted;
   TextEditingController genderEdit = TextEditingController();
   TextEditingController dobEdit = TextEditingController();
   TextEditingController emailEdit = TextEditingController();
-   DateTime _selectedDate;
+  DateTime _selectedDate;
   bool _isHidden = true;
   final _formKey = GlobalKey<FormState>();
 
@@ -178,8 +179,8 @@ class _UserRegistrationState extends State<UserRegistration> {
                           const SizedBox(height: 10),
                           Container(
                             alignment: Alignment.topLeft,
-                            margin:
-                                const EdgeInsets.only(top: 20, right: 20, bottom: 10),
+                            margin: const EdgeInsets.only(
+                                top: 20, right: 20, bottom: 10),
                             child: TextButton(
                               onPressed: () {
                                 setState(() {
@@ -216,7 +217,8 @@ class _UserRegistrationState extends State<UserRegistration> {
                                       controller: nameEdit,
                                       validator: (value) {
                                         Pattern pattern = r'^[a-z A-Z,.\-]+$';
-                                        RegExp regex = RegExp(pattern.toString());
+                                        RegExp regex =
+                                            RegExp(pattern.toString());
                                         if (!regex.hasMatch(value) ||
                                             value.length < 5) {
                                           return 'Enter Valid Full name, should be more than 5 characters';
@@ -364,7 +366,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                                 DateFormat('yyyy-MM-dd');
                             var dio = Dio();
                             dio.options.baseUrl =
-                                "http://api.cabandcargo.com/v1.0/";
+                                "https://cabandcargo.com/v1.0";
                             var formData = FormData.fromMap(({
                               "name": nameEdit.value.text.toLowerCase(),
                               "username": usernameEdit.value.text.toLowerCase(),
@@ -379,6 +381,11 @@ class _UserRegistrationState extends State<UserRegistration> {
                             }));
                             Response response =
                                 await dio.post('/register', data: formData);
+                            // debugPrint(response.statusMessage);
+                            debugPrint("data${response.data}");
+                            debugPrint("data${response.statusMessage}");
+                            debugPrint("res${response}");
+                            debugPrint("form${formData}");
                             dissmissLoader(context);
                             if (response != null) {
                               UserRegisterModal userRegistration =
@@ -386,29 +393,39 @@ class _UserRegistrationState extends State<UserRegistration> {
                               if (userRegistration.status) {
                                 // showOtpVerify(userRegistration.data,
                                 //     userRegistration.token);
-                                setUser(userRegistration.data.toJson(),  userRegistration.token);
+                                setUser(userRegistration.data.toJson(),
+                                    userRegistration.token);
                                 Location location = Location();
-                                permissionGranted = await location.hasPermission();
+                                permissionGranted =
+                                    await location.hasPermission();
 
                                 Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => permissionGranted ==
-                                            PermissionStatus.granted
-                                            ? DashBoard()
-                                            : const UserLocationScreen()),
-                                        (Route<dynamic> route) => false);
+                                        builder: (context) =>
+                                            permissionGranted ==
+                                                    PermissionStatus.granted
+                                                ? DashBoard()
+                                                : const UserLocationScreen()),
+                                    (Route<dynamic> route) => false);
                               } else {
-                                print(response.data);
-                                showError(context, userRegistration.msg);
+                                getx.Get.snackbar(
+                                    "Error", userRegistration.msg);
+                                // print(response.data);
+                                // showError(context, userRegistration.msg);
                               }
                             }
                           }
                         } else {
-                          showError(context, "please select valid date");
+                          getx.Get.snackbar(
+                              "Error", "please select valid date");
+
+                          // showError(context, "please select valid date");
                         }
                       } else {
-                        showError(context, "Please agree terms and condition");
+                        getx.Get.snackbar(
+                            "Error", "Please agree terms and condition");
+                        // showError(context, "Please agree terms and condition");
                       }
                     }),
               ),
@@ -453,13 +470,15 @@ class _UserRegistrationState extends State<UserRegistration> {
           child: Padding(
             padding: MediaQuery.of(context).viewInsets,
             child: Container(
-              margin: const EdgeInsets.only(top: 20, bottom: 5, right: 10, left: 10),
+              margin: const EdgeInsets.only(
+                  top: 20, bottom: 5, right: 10, left: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -491,7 +510,8 @@ class _UserRegistrationState extends State<UserRegistration> {
                     height: 20,
                   ),
                   Container(
-                    margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+                    margin: const EdgeInsets.symmetric(
+                        vertical: 20, horizontal: 30),
                     child: Text(
                         "Verification code had sent to " +
                             emailEdit.text.toLowerCase(),
@@ -564,7 +584,7 @@ class _UserRegistrationState extends State<UserRegistration> {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    //this builder could be the issue
+                                      //this builder could be the issue
                                       builder: (context) => permissionGranted ==
                                               PermissionStatus.granted
                                           ? DashBoard()

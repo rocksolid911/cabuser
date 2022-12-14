@@ -17,6 +17,7 @@ import 'package:aimcabuser/utils/util.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:get/route_manager.dart';
 import 'package:location/location.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
@@ -58,42 +59,46 @@ class MyApp extends StatelessWidget {
       dispose: (context, ApiService service) => service.client.dispose(),
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider<VariableProvider>(create: (context)=>VariableProvider()),
-          ChangeNotifierProvider<BookingProvider>(create: (context)=>BookingProvider()),
+          ChangeNotifierProvider<VariableProvider>(
+              create: (context) => VariableProvider()),
+          ChangeNotifierProvider<BookingProvider>(
+              create: (context) => BookingProvider()),
         ],
-        child: NeumorphicApp(
-          debugShowCheckedModeBanner: false,
-          title: 'AIM CAB',
-          themeMode: ThemeMode.light,
-          theme: NeumorphicThemeData(
-            baseColor: Colors.white,
-            lightSource: LightSource.topLeft,
-            depth: 10,
-            variantColor: HexColor("1B4670"),
-            accentColor: HexColor("1B4670"),
-          ),
+        child: GetMaterialApp(
+          home: NeumorphicApp(
+            debugShowCheckedModeBanner: false,
+            title: 'AIM CAB',
+            themeMode: ThemeMode.light,
+            theme: NeumorphicThemeData(
+              baseColor: Colors.white,
+              lightSource: LightSource.topLeft,
+              depth: 10,
+              variantColor: HexColor("1B4670"),
+              accentColor: HexColor("1B4670"),
+            ),
 
-//       theme: ThemeData(
-//
-//         // This is the theme of your application.
-//         //
-//         // Try running your application with "flutter run". You'll see the
-//         // application has a blue toolbar. Then, without quitting the app, try
-//         // changing the primarySwatch below to Colors.green and then invoke
-//         // "hot reload" (press "r" in the console where you ran "flutter run",
-//         // or simply save your changes to "hot reload" in a Flutter IDE).
-//         // Notice that the counter didn't reset back to zero; the application
-//         // is not restarted.
-// primaryColor: HexColor("1B4670"),
-//         primarySwatch: Colors.blue,
-//       ),
-          home: mainUser == null
-              ? SplashScreen()
-              : mainUser == "user"
-                  ? permissionGranted == PermissionStatus.granted
-                      ? DashBoard()
-                      : const UserLocationScreen()
-                      :Container(),
+            //       theme: ThemeData(
+            //
+            //         // This is the theme of your application.
+            //         //
+            //         // Try running your application with "flutter run". You'll see the
+            //         // application has a blue toolbar. Then, without quitting the app, try
+            //         // changing the primarySwatch below to Colors.green and then invoke
+            //         // "hot reload" (press "r" in the console where you ran "flutter run",
+            //         // or simply save your changes to "hot reload" in a Flutter IDE).
+            //         // Notice that the counter didn't reset back to zero; the application
+            //         // is not restarted.
+            // primaryColor: HexColor("1B4670"),
+            //         primarySwatch: Colors.blue,
+            //       ),
+            home: mainUser == null
+                ? SplashScreen()
+                : mainUser == "user"
+                    ? permissionGranted == PermissionStatus.granted
+                        ? DashBoard()
+                        : const UserLocationScreen()
+                    : Container(),
+          ),
         ),
       ),
     );

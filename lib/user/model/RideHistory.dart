@@ -36,11 +36,10 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     rideDetail = json['ride_detail'] != null
-         ?RideDetail.fromJson(json['ride_detail'])
+        ? RideDetail.fromJson(json['ride_detail'])
         : null;
-    carData = json['car_data'] != null
-       ?  CarData.fromJson(json['car_data'])
-        : null;
+    carData =
+        json['car_data'] != null ? CarData.fromJson(json['car_data']) : null;
     driverData = json['driver_data'] != null
         ? DriverData.fromJson(json['driver_data'])
         : null;
@@ -64,7 +63,7 @@ class Data {
 class RideDetail {
   String driverId;
   String vehicleType;
-  int amount;
+  double amount;
   bool paymentDone;
   int amountReceived;
   String paymentTime;

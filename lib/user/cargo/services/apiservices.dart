@@ -34,7 +34,7 @@ class CargoApi{
     try {
 
       var response = await http.post(
-        Uri.parse('http://api.cabandcargo.com/v1.0/cargo/add-booking'),
+        Uri.parse('https://cabandcargo.com/v1.0/cargo/add-booking'),
         headers: {
           "Authorization": token,
           'Content-Type': 'application/json',

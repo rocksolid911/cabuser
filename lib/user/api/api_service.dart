@@ -3,9 +3,11 @@ import 'package:chopper/chopper.dart';
 
 part 'api_service.chopper.dart';
 
-@ChopperApi(baseUrl: 'http://api.cabandcargo.com/v1.0')
+// @ChopperApi(baseUrl: 'http://api.cabandcargo.com/v1.0')
+@ChopperApi(baseUrl: 'https://cabandcargo.com/v1.0/')
 abstract class ApiService extends ChopperService {
   @Post(path: '/register')
+  
   Future<Response> postRegister(@Body() Map<String,dynamic> body);
   @Post(path: '/login')
   Future<Response> postLogin(@Body() Map<String,dynamic> body);
@@ -28,8 +30,6 @@ abstract class ApiService extends ChopperService {
   Future<Response> postDriverProfileUpdate(@Path("id") String id,@Body() Map<String,dynamic> body);
   @Get(path: '/verify-driver-otp')
   Future<Response> verifyDriverOtp(@Body() Map<String,dynamic> body);
-
-
   @Post(path: '/add-transporter')
   Future<Response> postTransporterRegister(@Body() Map<String,dynamic> body);
   @Post(path: '/transporter-login')
@@ -42,7 +42,7 @@ abstract class ApiService extends ChopperService {
   Future<Response> verifyTransporterOtp(@Body() Map<String,dynamic> body);
   static ApiService create() {
     final _client = ChopperClient(
-      converter: JsonConverter(),
+      converter:  JsonConverter(),
       errorConverter: const JsonConverter(),
       interceptors: [HttpLoggingInterceptor()],
       services: [

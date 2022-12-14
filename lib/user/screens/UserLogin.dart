@@ -1,11 +1,12 @@
 import 'dart:async';
-
+import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
+import 'package:get/get.dart';
 // import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:location/location.dart';
@@ -139,46 +140,54 @@ class _UserLoginState extends State<UserLogin> {
                             ))),
                         onPressed: () async {
                           if (_formKey.currentState.validate()) {
-                            showLoader(context);
+                            try {
+                              showLoader(context);
+                              ApiService service = ApiService.create();
+                              final response = await service.postLogin(
+                                {
+                                  "username":
+                                      usernameEdit.value.text.toLowerCase(),
+                                  "password": passwordEdit.value.text,
+                                  // "type": "user"
+                                  "login_type": "normal",
+                                  "facebook_id": "",
+                                  "google_id": "",
+                                  "firebase_id": ""
+                                },
+                              );
+                              var data = jsonDecode(response.bodyString);
 
-                            ApiService service = ApiService.create();
-                            final response = await service.postLogin({
-                              "username": usernameEdit.value.text.toLowerCase(),
-                              "password": passwordEdit.value.text,
-                              // "type": "user"
-                              "login_type": "normal",
-                              "facebook_id": "",
-                              "google_id":"",
-                              "firebase_id":""
-                            });
-                            dissmissLoader(context);
-                            if (response.isSuccessful) {
-                              UserRegisterModal userRegistration =
-                                  UserRegisterModal.fromJson(response.body);
-                              if (userRegistration.status) {
+                              debugPrint("type${response.runtimeType}");
+                              debugPrint("body${response.body}");
+                              debugPrint("code${response.statusCode}");
+                              debugPrint("bodyString$data");
+
+                              if (data['status'] == true) {
+                                UserRegisterModal userRegistration =
+                                    UserRegisterModal.fromJson(response.body);
+
+                                // Get.snackbar("Success", data['message']);
+                                dissmissLoader(context);
+
                                 setUser(userRegistration.data.toJson(),
                                     userRegistration.token);
                                 Location location = Location();
 
-                                bool _serviceEnabled;
-
-                                LocationData _locationData;
                                 PermissionStatus permissionGranted =
                                     await location.hasPermission();
-                                Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            permissionGranted ==
-                                                    PermissionStatus.granted
-                                                ? DashBoard()
-                                                : const UserLocationScreen()),
-                                    (Route<dynamic> route) => false);
+                                navigate(permissionGranted);
+                              } else if (data['status'] == 404) {
+                                dissmissLoader(context);
+                                Get.snackbar("Error", data['message']);
                               } else {
-                                showError(
-                                    context,
-                                    userRegistration.msg ?? "please check username or password");
+                                dissmissLoader(context);
+                                debugPrint(data['message']);
+
+                                Get.snackbar("Error", data['message']);
                               }
+                            } catch (e) {
+                              dissmissLoader(context);
+                              Get.snackbar("Error", e.toString());
                             }
                           }
                         }),
@@ -233,6 +242,16 @@ class _UserLoginState extends State<UserLogin> {
     );
   }
 
+  navigate(PermissionStatus permissionGranted) {
+    Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => permissionGranted == PermissionStatus.granted
+                ? DashBoard()
+                : const UserLocationScreen()),
+        (Route<dynamic> route) => false);
+  }
+
   void forgotPassword() {
     TextEditingController emailController = TextEditingController();
     TextEditingController otpText = TextEditingController();
@@ -251,7 +270,8 @@ class _UserLoginState extends State<UserLogin> {
                 return Container(
                   decoration: BoxDecoration(
                       color: HexColor("D6E3F3"),
-                      borderRadius: const BorderRadius.all(Radius.circular(20))),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
                   child: Padding(
                     padding: const EdgeInsets.all(12.0),
                     child: Form(
@@ -330,7 +350,8 @@ class _UserLoginState extends State<UserLogin> {
                           Visibility(
                             visible: isOtpVisibility,
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
                               child: PinCodeTextField(
                                 appContext: context,
                                 obscureText: false,
@@ -361,7 +382,8 @@ class _UserLoginState extends State<UserLogin> {
                           ),
                           Center(
                             child: Container(
-                              margin: const EdgeInsets.only(top: 20, bottom: 20),
+                              margin:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
                               child: NeumorphicButton(
                                   style: NeumorphicStyle(
                                       color: HexColor("#E3EDF7")),
@@ -453,14 +475,14 @@ class _UserLoginState extends State<UserLogin> {
           decoration: BoxDecoration(
               color: HexColor("D6E3F3"),
               borderRadius: BorderRadius.only(
-                  topLeft: const Radius.circular(50.0),
-                  topRight: const Radius.circular(50.0))),
+                  topLeft: Radius.circular(50.0),
+                  topRight: Radius.circular(50.0))),
           child: Padding(
             padding: MediaQuery.of(context).viewInsets,
             child: StatefulBuilder(builder: (context, setState) {
               return Container(
-                margin:
-                    const EdgeInsets.only(top: 20, bottom: 5, right: 10, left: 10),
+                margin: const EdgeInsets.only(
+                    top: 20, bottom: 5, right: 10, left: 10),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -468,8 +490,8 @@ class _UserLoginState extends State<UserLogin> {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Container(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 10),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -495,8 +517,8 @@ class _UserLoginState extends State<UserLogin> {
                           color: HexColor("D6E3F3"),
                         ),
                         child: Container(
-                          margin:
-                              const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 1, horizontal: 10),
                           child: TextFormField(
                             validator: (value) {
                               if (value == null ||
@@ -536,8 +558,8 @@ class _UserLoginState extends State<UserLogin> {
                           color: HexColor("D6E3F3"),
                         ),
                         child: Container(
-                          margin:
-                              const EdgeInsets.symmetric(vertical: 1, horizontal: 10),
+                          margin: const EdgeInsets.symmetric(
+                              vertical: 1, horizontal: 10),
                           child: TextFormField(
                             validator: (value) {
                               if (value == null ||

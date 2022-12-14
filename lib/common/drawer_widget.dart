@@ -16,7 +16,8 @@ class Custom_Drawer extends StatelessWidget {
   const Custom_Drawer({
     Key key,
     @required User user,
-  }) : _user = user, super(key: key);
+  })  : _user = user,
+        super(key: key);
 
   final User _user;
 
@@ -49,7 +50,9 @@ class Custom_Drawer extends StatelessWidget {
                     child: Column(
                       children: [
                         Image.network(
-                          _user != null ? _user.userimage : "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg",
+                          _user != null
+                              ? _user.userimage
+                              : "https://static.vecteezy.com/system/resources/previews/002/318/271/original/user-profile-icon-free-vector.jpg",
                           width: 100,
                           height: 100,
                         ),
@@ -99,8 +102,7 @@ class Custom_Drawer extends StatelessWidget {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                    builder: (context) => const SupportScreen()),
+                MaterialPageRoute(builder: (context) => const SupportScreen()),
               );
             }),
             DrawerListTile("About", 'assets/images/about_icon.svg', () {
@@ -111,35 +113,33 @@ class Custom_Drawer extends StatelessWidget {
                     builder: (context) => const UserTerms("About")),
               );
             }),
-            DrawerListTile(
-                "Terms & Condition", 'assets/images/terms_icon.svg', () {
+            DrawerListTile("Terms & Condition", 'assets/images/terms_icon.svg',
+                () {
               Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
-                    const UserTerms("Terms & Conditions")),
+                        const UserTerms("Terms & Conditions")),
               );
             }),
             DrawerListTile(
-                "Privacy Policy", 'assets/images/privacy_policy_icon.svg',
-                    () {
-                  Navigator.pop(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                        const UserTerms("Privacy & Policy")),
-                  );
-                }),
+                "Privacy Policy", 'assets/images/privacy_policy_icon.svg', () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const UserTerms("Privacy & Policy")),
+              );
+            }),
             DrawerListTile("Logout", 'assets/images/sign_out_icon.svg',
-                    () async {
-                  await logoutUser();
-                  Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => SplashScreen()),
-                          (Route<dynamic> route) => false);
-                }),
+                () async {
+              await logoutUser();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => SplashScreen()),
+                  (Route<dynamic> route) => false);
+            }),
           ],
         ),
       ),
