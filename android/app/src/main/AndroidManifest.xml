@@ -61,7 +61,8 @@
               android:resource="@style/NormalTheme"
               />
             <meta-data android:name="com.google.android.geo.API_KEY"
-           android:value="AIzaSyB-vkK5AJbJYXQTMLmZ_ABS3_wPQfsRH9o"/>
+           android:value="AIzaSyDjBew0ffoKczxrjrBxB4ZnLCZQUULjbdU"/>
+<!--           android:value="AIzaSyB-vkK5AJbJYXQTMLmZ_ABS3_wPQfsRH9o"/>-->
 
             <meta-data
            android:name="com.facebook.sdk.ApplicationId"

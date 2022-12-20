@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:aimcabuser/common/subscription.dart';
 import 'package:aimcabuser/common/topbar.dart';
 import 'package:aimcabuser/user/cargo/screen/cargomainscreen.dart';
@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:flutter_neumorphic/flutter_neumorphic.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:geocoder/geocoder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -136,11 +137,14 @@ class _DashBoardState extends State<DashBoard> {
 
     try {
       // Configure socket transports must be sepecified
-      socket = io('http://api.cabandcargo.com/socket_chat', <String, dynamic>{
+      socket = io('https://cabandcargo.com/socket_chat',
+          <String, dynamic>{
         'transports': ['websocket'],
         'query': {"id": _user.sId},
         'autoConnect': true,
       });
+      socket.connect();
+
       socket.onConnect((data) => {
             print("IsConnected:" + socket.connected.toString()),
             print("SocketID:" + socket.id.toString())
@@ -1122,6 +1126,41 @@ class _DashBoardState extends State<DashBoard> {
                                             ),
                                             InkWell(
                                               onTap: () async {
+                                                // await PlacesAutocomplete.show(
+                                                //   context: context,
+                                                //   apiKey: kgoogleMapKey,
+                                                //   radius: 10000000,
+                                                //   types: [],
+                                                //   startText: startAddressController.text,
+                                                //   strictbounds: false,
+                                                //   mode: Mode.overlay,
+                                                //   language: "en",
+                                                //   decoration: InputDecoration(
+                                                //     hintText: 'Search',
+                                                //     focusedBorder: OutlineInputBorder(
+                                                //       borderRadius: BorderRadius.circular(20),
+                                                //       borderSide: BorderSide(
+                                                //         color: Colors.white,
+                                                //       ),
+                                                //     ),
+                                                //   ),
+                                                //   components: [],
+                                                // ).then((value) {
+                                                //   setState(() {
+                                                //     // // predictions = [];
+                                                //     // // _startAddress = "";
+                                                //     // startAddressController.clear();
+                                                //     // markers.clear();
+                                                //     // polylines.clear();
+                                                //     // polylineCoordinates.clear();
+                                                //     // _placeDistance = 0.0;
+                                                //   });
+                                                //   print(value.description);
+                                                //
+                                                //     // setState(() {});
+                                                //
+                                                // }),
+
                                                 var prefs =
                                                     await SharedPreferences
                                                         .getInstance();
@@ -1132,12 +1171,12 @@ class _DashBoardState extends State<DashBoard> {
                                                     builder: (context) =>
                                                         PlacePicker(
                                                       kgoogleMapKey,
-                                                      //  displayLocation: LatLng(lat, lon),
-                                                      localizationItem:
-                                                          LocalizationItem(),
+                                                      displayLocation:
+                                                          LatLng(lat, lon),
                                                     ),
                                                   ),
                                                 );
+                                                debugPrint("result${result.formattedAddress}");
 
                                                 final coordinates = Coordinates(
                                                     result.latLng.latitude,
@@ -1462,7 +1501,8 @@ class _DashBoardState extends State<DashBoard> {
                                                             child: Column(
                                                               children: [
                                                                 Image.network(
-                                                                  "https://cabandcargo.com/${rideEstimate.data[index].image}",
+                                                                  // "https://cabandcargo.com/${rideEstimate.data[index].image}",
+                                                                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgDsthmI_kEgeQTzTClpzNBF0qJC6SAHe1Mg&usqp=CAU",
                                                                   height: 50,
                                                                   width: 50,
                                                                 ),
@@ -1911,8 +1951,9 @@ class _DashBoardState extends State<DashBoard> {
 
                                                             //dissmissLoader(context);
                                                           } else {
-                                                            showError(context,
-                                                                "Please select your ride");
+                                                            Get.snackbar("Error", "Please select your ride");
+                                                            // showError(context,
+                                                            //     "Please select your ride");
                                                           }
                                                         },
                                                       ),
@@ -2632,3 +2673,4 @@ class _DashBoardState extends State<DashBoard> {
     getRunningRideData();
   }
 }
+
