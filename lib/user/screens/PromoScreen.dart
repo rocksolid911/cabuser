@@ -99,24 +99,27 @@ class _PromoScreenState extends State<PromoScreen> {
                                           Container(
                                             margin: EdgeInsets.all(5),
 
-                                            child: FlatButton(
+                                            child: ElevatedButton(
 
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 10, horizontal: 30),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius
-                                                    .circular(25), // <-- Radius
+
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 10, horizontal: 30),
+                                                // shape: RoundedRectangleBorder(
+                                                //   borderRadius: BorderRadius
+                                                //       .circular(25), // <-- Radius
+                                                // ),
+
+                                                color: HexColor("DADADA"),
+                                                child: Text("APPLY",
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight: FontWeight
+                                                            .bold,
+                                                        fontSize: 15,
+                                                        color: Theme
+                                                            .of(context)
+                                                            .accentColor)),
                                               ),
-
-                                              color: HexColor("DADADA"),
-                                              child: Text("APPLY",
-                                                  style: GoogleFonts.poppins(
-                                                      fontWeight: FontWeight
-                                                          .bold,
-                                                      fontSize: 15,
-                                                      color: Theme
-                                                          .of(context)
-                                                          .accentColor)),
                                               onPressed: () {
                                                 Navigator.pop(context,snapshot.data[index].promocode );
                                                 showSuccess(context, "Promocode applied successfully");

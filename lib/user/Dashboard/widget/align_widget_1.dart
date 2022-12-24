@@ -39,19 +39,22 @@ class _AlignWidget1State extends State<AlignWidget1> {
         child: Container(
           margin: const EdgeInsets.all(20),
           alignment: Alignment.bottomCenter,
-          child: FlatButton(
+          child: ElevatedButton(
             // minWidth: 250,
-            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12), // <-- Radius
-            ),
-            color: Theme.of(context).accentColor,
-            child: Text(
-              "Next",
-              style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                  color: Colors.white),
+
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+              // shape: RoundedRectangleBorder(
+              //   borderRadius: BorderRadius.circular(12), // <-- Radius
+              // ),
+              color: Theme.of(context).accentColor,
+              child: Text(
+                "Next",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: Colors.white),
+              ),
             ),
             // onPressed: () async {
             //   //   showPickup();

@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_google_places/flutter_google_places.dart';
-import 'package:aimcabuser/common/subscription.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:aimcabuser/common/topbar.dart';
 import 'package:aimcabuser/user/cargo/screen/cargomainscreen.dart';
 import 'package:aimcabuser/user/provider/variableprovider.dart';
@@ -54,7 +54,7 @@ class DashBoard extends StatefulWidget {
 class _DashBoardState extends State<DashBoard> {
   String _mapStyle = "";
   User _user;
-  Socket socket;
+  // Socket socket;
   Address address;
   Address destinationAddress;
   double CAMERA_ZOOM = 13;
@@ -130,41 +130,46 @@ class _DashBoardState extends State<DashBoard> {
     });
   }
 
-  void connectToServer() {
+  IO.Socket socket;
+  void connectToServer() async {
     print("UsserIdddd:" + _user.sId);
     Varibles.SendID = _user.sId;
     Varibles.SenderName = _user.username;
-
+    var token = await getToken();
     try {
-      // Configure socket transports must be sepecified
-      socket = io('https://cabandcargo.com/socket_chat',
-          <String, dynamic>{
-        'transports': ['websocket'],
-        'query': {"id": _user.sId},
-        'autoConnect': true,
-      });
-      socket.connect();
+      socket = IO.io(
+          'https://cabandcargo.com/socket_chat',
+          OptionBuilder()
+              .setTransports(['websocket'])
+              .enableAutoConnect()
+              .setQuery({"id": _user.sId})
+              .build());
+      // debugPrint("socket_check${socket.}");
+      socket.printError();
 
       socket.onConnect((data) => {
-            print("IsConnected:" + socket.connected.toString()),
-            print("SocketID:" + socket.id.toString())
+            debugPrint("IsConnected:" + socket.connected.toString()),
+            debugPrint("SocketID:" + socket.id.toString())
+          });
+      socket.onError((data) => {
+            debugPrint("Error check$data"),
           });
       socket.on("showBooking",
-          (data) => {print("Call1111111114:"), onBookingFound(data)});
+          (data) => {debugPrint("Call1111111114:"), onBookingFound(data)});
       socket.on("OnDriverLocationSend",
-          (data) => {print("Call1111111115:"), onBookingFound(data)});
+          (data) => {debugPrint("Call1111111115:"), onBookingFound(data)});
 
       // Connect to websocket
 
       // Handle socket events
 
     } catch (e) {
-      print("socket_error:" + e.toString());
+      debugPrint("socket_error:" + e.toString());
     }
   }
 
   onNewBooking(param0) {
-    print(param0.toString());
+    debugPrint(param0.toString());
   }
 
   _getCurrentLocation() async {
@@ -179,7 +184,7 @@ class _DashBoardState extends State<DashBoard> {
           await Geocoder.local.findAddressesFromCoordinates(coordinates);
       var first = addresses.first;
       address = first;
-      print("${first.featureName} : ${first.addressLine}");
+      debugPrint("${first.featureName} : ${first.addressLine}");
 
       setState(() {});
     }).catchError((e) {
@@ -199,7 +204,7 @@ class _DashBoardState extends State<DashBoard> {
 
     var token = await getToken();
     DateTime date = DateTime.now();
-    print("driverId:" + _user.sId);
+    debugPrint("driverId:" + _user.sId);
 
     var response = await dio.post(
       '/get-current-ride',
@@ -210,14 +215,14 @@ class _DashBoardState extends State<DashBoard> {
         },
       ),
     );
-    print("res_data:" + response.data.toString());
+    debugPrint("res_data:" + response.data.toString());
     setState(() {
       rideData = response.data;
     });
 
     dissmissLoader(context);
     if (rideData['data']['booking']['is_arrvied'] ?? false) {
-      print("ride data n rng rdiedata :$rideData");
+      debugPrint("ride data n rng rdiedata :$rideData");
       Marker startMarker = Marker(
         markerId: MarkerId(response.data['data']['booking']['source']),
         position: LatLng(response.data['data']['booking']['source_location'][0],
@@ -358,7 +363,7 @@ class _DashBoardState extends State<DashBoard> {
         ),
       );
     }
-    print(response);
+    debugPrint(response.toString());
   }
 
   void showPrebook() {
@@ -465,19 +470,21 @@ class _DashBoardState extends State<DashBoard> {
                   Container(
                     margin: const EdgeInsets.all(20),
                     alignment: Alignment.center,
-                    child: FlatButton(
-                      minWidth: 250,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12), // <-- Radius
+                    child: ElevatedButton(
+                      child: Container(
+                        // minWidth: 250,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 50),
+                        // shape: RoundedRectangleBorder(
+                        //   borderRadius: BorderRadius.circular(12), // <-- Radius
+                        // ),
+                        color: Theme.of(context).accentColor,
+                        child: Text("Confirm",
+                            style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: Colors.white)),
                       ),
-                      color: Theme.of(context).accentColor,
-                      child: Text("Confirm",
-                          style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                              color: Colors.white)),
                       onPressed: () async {
                         if (dateTime != null) {
                           if (selectedCab != -1) {
@@ -643,7 +650,7 @@ class _DashBoardState extends State<DashBoard> {
     //                                   final coordinates = Coordinates(
     //                                       result.latLng.latitude,
     //                                       result.latLng.longitude);
-    //                                   print("result" + result.toString());
+    //                                   debugPrint("result" + result.toString());
     //                                   var addresses = await Geocoder.local
     //                                       .findAddressesFromCoordinates(
     //                                           coordinates);
@@ -996,7 +1003,7 @@ class _DashBoardState extends State<DashBoard> {
 //                                                       fontSize: 15,
 //                                                       color: Colors.white)),
 //                                               onPressed: () {
-//                                                 print('click desination');
+//                                                 debugPrint('click desination');
 //                                                 showPickup();
 //                                               },
 //                                             ),
@@ -1081,7 +1088,7 @@ class _DashBoardState extends State<DashBoard> {
                                                 final coordinates = Coordinates(
                                                     result.latLng.latitude,
                                                     result.latLng.longitude);
-                                                print("result" +
+                                                debugPrint("result" +
                                                     result.toString());
                                                 var addresses = await Geocoder
                                                     .local
@@ -1155,7 +1162,7 @@ class _DashBoardState extends State<DashBoard> {
                                                 //     // polylineCoordinates.clear();
                                                 //     // _placeDistance = 0.0;
                                                 //   });
-                                                //   print(value.description);
+                                                //   debugPrint(value.description);
                                                 //
                                                 //     // setState(() {});
                                                 //
@@ -1176,7 +1183,8 @@ class _DashBoardState extends State<DashBoard> {
                                                     ),
                                                   ),
                                                 );
-                                                debugPrint("result${result.formattedAddress}");
+                                                debugPrint(
+                                                    "result${result.formattedAddress}");
 
                                                 final coordinates = Coordinates(
                                                     result.latLng.latitude,
@@ -1227,21 +1235,23 @@ class _DashBoardState extends State<DashBoard> {
                                       MainAxisAlignment.spaceAround,
                                   children: [
                                     //cab button
-                                    FlatButton(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 15, horizontal: 50),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            12), // <-- Radius
+                                    ElevatedButton(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 15, horizontal: 50),
+                                        // shape: RoundedRectangleBorder(
+                                        //   borderRadius: BorderRadius.circular(
+                                        //       12), // <-- Radius
+                                        // ),
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .secondary,
+                                        child: Text("Cab",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Colors.white)),
                                       ),
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                      child: Text("Cab",
-                                          style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 15,
-                                              color: Colors.white)),
                                       onPressed: () async {
                                         if (destinationAddress != null) {
                                           String startCoordinatesString =
@@ -1681,30 +1691,33 @@ class _DashBoardState extends State<DashBoard> {
                                                               10),
                                                       alignment:
                                                           Alignment.center,
-                                                      child: FlatButton(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 15,
-                                                                horizontal: 30),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(12),
+                                                      child: ElevatedButton(
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 15,
+                                                                  horizontal:
+                                                                      30),
+                                                          // shape:
+                                                          // RoundedRectangleBorder(
+                                                          //   borderRadius:
+                                                          //   BorderRadius
+                                                          //       .circular(12),
+                                                          // ),
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .accentColor,
+                                                          child: Text(
+                                                              "BOOK NOW",
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 15,
+                                                                  color: Colors
+                                                                      .white)),
                                                         ),
-                                                        color: Theme.of(context)
-                                                            .accentColor,
-                                                        child: Text("BOOK NOW",
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        15,
-                                                                    color: Colors
-                                                                        .white)),
                                                         onPressed: () async {
                                                           if (selectedCab !=
                                                               -1) {
@@ -1808,10 +1821,19 @@ class _DashBoardState extends State<DashBoard> {
                                                                 },
                                                               ),
                                                             );
+                                                            if (response
+                                                                    .statusCode ==
+                                                                200) {
+                                                              dissmissLoader(
+                                                                  context);
+                                                            } else {
+                                                              dissmissLoader(
+                                                                  context);
+                                                            }
                                                             // print(response);
                                                             // print(
                                                             //     response.data);
-                                                            print(
+                                                            debugPrint(
                                                                 'api response${response.data}');
 
                                                             promocode = "";
@@ -1918,23 +1940,23 @@ class _DashBoardState extends State<DashBoard> {
                                                             //  };
 
                                                             try {
-                                                              print(
+                                                              debugPrint(
                                                                   "=================================================================");
-                                                              // print(test);
+                                                              // debugPrint(test);
                                                               //TODO chk for socket events
-                                                              print(
+                                                              debugPrint(
                                                                   'api value response${value.data.amount}');
 
                                                               socket.emit(
                                                                   'showBooking',
                                                                   value.data
                                                                       .toString());
-                                                              print(
+                                                              debugPrint(
                                                                   "ride dta : $rideData");
                                                             } catch (err) {
-                                                              print(
+                                                              debugPrint(
                                                                   "========== Error =================");
-                                                              print(err);
+                                                              debugPrint(err);
                                                             }
 
                                                             //TODO look it up working code
@@ -1951,7 +1973,9 @@ class _DashBoardState extends State<DashBoard> {
 
                                                             //dissmissLoader(context);
                                                           } else {
-                                                            Get.snackbar("Error", "Please select your ride");
+                                                            Get.snackbar(
+                                                                "Error",
+                                                                "Please select your ride");
                                                             // showError(context,
                                                             //     "Please select your ride");
                                                           }
@@ -1964,29 +1988,33 @@ class _DashBoardState extends State<DashBoard> {
                                                               10),
                                                       alignment:
                                                           Alignment.center,
-                                                      child: FlatButton(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                vertical: 15,
-                                                                horizontal: 30),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  12), // <-- Radius
+                                                      child: ElevatedButton(
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  vertical: 15,
+                                                                  horizontal:
+                                                                      30),
+                                                          // shape:
+                                                          // RoundedRectangleBorder(
+                                                          //   borderRadius:
+                                                          //   BorderRadius.circular(
+                                                          //       12), // <-- Radius
+                                                          // ),
+                                                          color: HexColor(
+                                                              "DADADA"),
+                                                          child: Text(
+                                                              "PRE-BOOK",
+                                                              style: GoogleFonts.poppins(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 15,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .accentColor)),
                                                         ),
-                                                        color:
-                                                            HexColor("DADADA"),
-                                                        child: Text("PRE-BOOK",
-                                                            style: GoogleFonts.poppins(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 15,
-                                                                color: Theme.of(
-                                                                        context)
-                                                                    .accentColor)),
                                                         onPressed: () {
                                                           showPrebook();
                                                           //        showPickup();
@@ -2216,29 +2244,33 @@ class _DashBoardState extends State<DashBoard> {
                                                         const EdgeInsets.only(
                                                             top: 5),
                                                     alignment: Alignment.center,
-                                                    child: FlatButton(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          vertical: 15,
-                                                          horizontal: 20),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                12), // <-- Radius
+                                                    child: ElevatedButton(
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .symmetric(
+                                                                vertical: 15,
+                                                                horizontal: 30),
+                                                        // shape:
+                                                        // RoundedRectangleBorder(
+                                                        //   borderRadius:
+                                                        //   BorderRadius.circular(
+                                                        //       12), // <-- Radius
+                                                        // ),
+                                                        color:
+                                                            HexColor("DADADA"),
+                                                        child: Text(
+                                                            "Contact driver",
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        15,
+                                                                    color: Colors
+                                                                        .white)),
                                                       ),
-                                                      color: Theme.of(context)
-                                                          .accentColor,
-                                                      child: Text(
-                                                          "Contact driver",
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 15,
-                                                                  color: Colors
-                                                                      .white)),
                                                       onPressed: () async {
                                                         String
                                                             startCoordinatesString =
@@ -2416,11 +2448,11 @@ class _DashBoardState extends State<DashBoard> {
                                                                       ['driver']
                                                                   ['name'];
 
-                                                          print(
+                                                          debugPrint(
                                                               '=================================iii=============');
-                                                          print(Varibles
+                                                          debugPrint(Varibles
                                                               .ReciveID);
-                                                          print(Varibles
+                                                          debugPrint(Varibles
                                                               .ReciverName);
 
                                                           Navigator.push(
@@ -2460,13 +2492,14 @@ class _DashBoardState extends State<DashBoard> {
                                                                 await getToken();
                                                             DateTime date =
                                                                 DateTime.now();
-                                                            print("book_id:" +
+                                                            debugPrint("book_id:" +
                                                                 rideData['data']
                                                                         [
                                                                         'booking']
                                                                     ['_id']);
-                                                            print("driver_id:" +
-                                                                _user.sId);
+                                                            debugPrint(
+                                                                "driver_id:" +
+                                                                    _user.sId);
                                                             var response =
                                                                 await dio.post(
                                                               '/cancel-a-ride',
@@ -2491,9 +2524,10 @@ class _DashBoardState extends State<DashBoard> {
                                                                 },
                                                               ),
                                                             );
-                                                            print("cancel_ride:" +
-                                                                response
-                                                                    .toString());
+                                                            debugPrint(
+                                                                "cancel_ride:" +
+                                                                    response
+                                                                        .toString());
                                                             // getRunningRideData();
 
                                                             dissmissLoader(
@@ -2651,9 +2685,9 @@ class _DashBoardState extends State<DashBoard> {
         },
       ),
     );
-    print(response);
+    debugPrint(response.toString());
     var value = LocationMapData.fromJson(response.data);
-    print(value);
+    debugPrint(value.toString());
 
     for (int i = 0; i < value.data.length; i++) {
       markers.add(Marker(
@@ -2673,4 +2707,3 @@ class _DashBoardState extends State<DashBoard> {
     getRunningRideData();
   }
 }
-
