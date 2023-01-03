@@ -145,6 +145,8 @@ class _DashBoardState extends State<DashBoard> {
               .setQuery({"id": _user.sId})
               .build());
       // debugPrint("socket_check${socket.}");
+      socket.connect();
+
       socket.printError();
 
       socket.onConnect((data) => {

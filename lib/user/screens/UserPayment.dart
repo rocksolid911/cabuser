@@ -20,9 +20,9 @@ class UserPayment extends StatefulWidget {
 }
 
 class _UserPaymentState extends State<UserPayment> {
-   Razorpay _razorpay;
-   Dio dio;
-   RazorPayWallet walletData;
+  Razorpay _razorpay;
+  Dio dio;
+  RazorPayWallet walletData;
   String EnterdAmountwallte = '';
   var user;
 
@@ -32,7 +32,7 @@ class _UserPaymentState extends State<UserPayment> {
     // TODO: implement initState
     dio = Dio();
     dio.options.baseUrl = appUrl;
-    _razorpay = new Razorpay();
+    _razorpay = Razorpay();
 
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
@@ -43,7 +43,7 @@ class _UserPaymentState extends State<UserPayment> {
 
   Future<dynamic> getwalltedeatisl() async {
     var dio = Dio();
-     user = await getUser();
+    user = await getUser();
     var token = await getToken();
 
     print("user_id_ride:" + user.sId);
@@ -52,7 +52,7 @@ class _UserPaymentState extends State<UserPayment> {
     Varibles.UserId = urlis;
     Varibles.Token = token;
     var response = await dio.get(
-      'http://aim.inawebtech.com/v1.0/user-data/' + urlis,
+      'https://cabandcargo.com/v1.0/user-data/' + urlis,
       options: Options(
         headers: {
           "Authorization": token // set content-length
@@ -78,7 +78,7 @@ class _UserPaymentState extends State<UserPayment> {
     print("user_id_ride:" + token);
 
     var resp = await dio.post(
-      'http://aim.inawebtech.com/v1.0/add-money-to-user-wallet',
+      'https://cabandcargo.com/v1.0/add-money-to-user-wallet',
       data: {
         "user_id": user.sId,
         "booking_id": user.sId,
@@ -113,7 +113,7 @@ class _UserPaymentState extends State<UserPayment> {
     var token = await getToken();
 
     var resp = await dio.post(
-      'http://aim.inawebtech.com/v1.0/add-money-to-user-wallet-success',
+      'https://cabandcargo.com/v1.0/add-money-to-user-wallet-success',
       data: {
         "SystemOrderId": Varibles.SystemOrderId,
         "OrderId": Varibles.id,
@@ -227,7 +227,10 @@ class _UserPaymentState extends State<UserPayment> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => PaymentHistory(sId: user.sId,)),
+                      MaterialPageRoute(
+                          builder: (context) => PaymentHistory(
+                                sId: user.sId,
+                              )),
                     );
                   },
                   child: Container(
